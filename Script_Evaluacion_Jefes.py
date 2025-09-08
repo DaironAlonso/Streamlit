@@ -1,12 +1,10 @@
 import streamlit as st
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder
-from sklearn.linear_model import LinearRegression
 import plotly.express as px
 import plotly.graph_objects as go
-import itertools
-import numpy as np
+import pickle
 import os
+import numpy as np
 
 # =========================
 # Configuración de la página
@@ -18,202 +16,47 @@ st.set_page_config(
 )
 
 # =========================
-# Función para cargar y procesar los datos (con cache)
+# Funciones de carga optimizadas
 # =========================
 @st.cache_data
-def cargar_datos():
-    # =========================
-    # 1. Leer y limpiar datos
-    # =========================
-    ruta_archivo = os.path.join(os.path.dirname(__file__), "transpuesto.parquet")
-    df = pd.read_parquet(
-        ruta_archivo,
-        engine='pyarrow'
-    )
-
-    # Limpieza de "Nivel de riesgo"
-    df["Nivel de riesgo"] = df["Nivel de riesgo"].replace({
-        "Anulado": "No Referido",
-        "Incompleta": "No Referido",
-        "No Aplica": "No Referido",
-        "No Responde": "No Referido",
-        "No Respondio": "No Referido",
-        "No Respondió": "No Referido",
-        "Sin Responder": "No Referido",
-        "Vacio": "No Referido"
-    })
-
-    # Limpieza de "Seleccione tipo de cargo que mas se parece"
-    df["Seleccione tipo de cargo que mas se parece"] = df["Seleccione tipo de cargo que mas se parece"].replace({
-        "Auxiliar, asistente administrativo, asistente técnico.": "Auxiliar, asistente administrativo, asistente técnico",
-        "Profesional; analista; técnico; tecnólogo": "Profesional, analista, técnico, tecnólogo"
-    })
-
-    # Limpieza de "Estrato según servicios Públicos"
-    df["Estrato según servicios Públicos"] = df["Estrato según servicios Públicos"].replace({
-        "No sé": "No referido",
-        "Finca": "No referido",
-        "": "No referido",
-        "(1,No referido)": "No referido",
-        "(3,No referido)": "No referido",
-        "FINCA": "No referido",
-        "finca": "No referido",
-        "No Refiere": "No referido",
-        "No refiere": "No referido",
-        "NO SE": "No referido",
-        "0": "No referido",
-        "(3,Finca)": "No referido",
-        "(1,No sé)": "No referido",
-    })
-
-    return df
-
-@st.cache_data
-def procesar_datos_base(df):
-    """Procesa los datos básicos sin predicciones"""
-    # =========================
-    # Codificación
-    # =========================
-    codificacion_riesgo = {
-        'No Referido': 0,
-        'Sin Riesgo O Con Riesgo Despreciable': 1,
-        'Riesgo Bajo': 2,
-        'Riesgo Medio': 3,
-        'Riesgo Alto': 4,
-        'Riesgo Muy Alto': 5
-    }
-
-    df['Nivel de riesgo codificado'] = df['Nivel de riesgo'].map(codificacion_riesgo)
-
-    # Variables demográficas
-    variables_demograficas = [
-        'Sexo', 
-        'Generación', 
-        'Rango de Edad', 
-        'Tipo de servicio', 
-        'Seleccione tipo de cargo que mas se parece', 
-        'Estrato según servicios Públicos',
-        'Empresa',
-        'Factor a Evaluar'
+def cargar_datos_procesados():
+    """Carga todos los datos pre-procesados"""
+    
+    # Verificar que existen los archivos
+    archivos_necesarios = [
+        'datos_procesados/agrupaciones_base.pkl',
+        'datos_procesados/datos_con_predicciones.pkl',
+        'datos_procesados/agrupaciones_demograficas.pkl',
+        'datos_procesados/variables_demograficas.pkl',
+        'datos_procesados/datos_base_procesados.parquet',
+        'datos_procesados/segmentacion.pkl'
     ]
-
-    # =========================
-    # Agrupación por niveles básicos
-    # =========================
-    agrupaciones_base = {
-        'Factor': df.groupby(['Año', 'Factor'])['Nivel de riesgo codificado'].mean().reset_index(),
-        'Dominio': df.groupby(['Año', 'Dominio'])['Nivel de riesgo codificado'].mean().reset_index(),
-        'Dimension': df.groupby(['Año', 'Dimension'])['Nivel de riesgo codificado'].mean().reset_index()
-    }
-
-    return df, agrupaciones_base, variables_demograficas
-
-@st.cache_data
-def generar_todas_predicciones(_df, _agrupaciones_base, _variables_demograficas):
-    """Genera todas las predicciones posibles de una sola vez"""
     
-    predicciones = {}
-    datos_con_predicciones = {}
+    for archivo in archivos_necesarios:
+        if not os.path.exists(archivo):
+            st.error(f"❌ Archivo faltante: {archivo}")
+            st.error("Por favor ejecuta primero 'generar_predicciones.py'")
+            st.stop()
     
-    # =============================================
-    # 1. PREDICCIONES GENERALES (sin demografía)
-    # =============================================
-    for nivel, df_nivel in _agrupaciones_base.items():
-        predicciones[f'{nivel}_general'] = {}
-        df_con_pred = df_nivel.copy()
-        
-        df_nivel_clean = df_nivel.dropna(subset=[nivel])
-        
-        for valor in df_nivel_clean[nivel].unique():
-            df_filtrado = df_nivel_clean[df_nivel_clean[nivel] == valor]
-            if len(df_filtrado) >= 2:
-                X = df_filtrado[['Año']].values.reshape(-1, 1)
-                y = df_filtrado['Nivel de riesgo codificado'].values
-                
-                try:
-                    # Usar modelo más simple y rápido
-                    model = LinearRegression()
-                    model.fit(X, y)
-                    
-                    pred = model.predict([[2026]])[0]
-                    predicciones[f'{nivel}_general'][valor] = round(pred, 2)
-                    
-                    # Agregar predicción al DataFrame
-                    nueva_fila = pd.DataFrame({
-                        'Año': [2026],
-                        nivel: [valor],
-                        'Nivel de riesgo codificado': [round(pred, 2)]
-                    })
-                    df_con_pred = pd.concat([df_con_pred, nueva_fila], ignore_index=True)
-                except Exception as e:
-                    print(f"Error en predicción general para {nivel} - {valor}: {e}")
-                    continue
-        
-        datos_con_predicciones[nivel] = df_con_pred
-
-    # =============================================
-    # 2. PREDICCIONES DEMOGRÁFICAS
-    # =============================================
-    agrupaciones_demograficas = {}
+    # Cargar datos
+    with open('datos_procesados/agrupaciones_base.pkl', 'rb') as f:
+        agrupaciones_base = pickle.load(f)
     
-    for nivel in ['Factor', 'Dominio', 'Dimension']:
-        predicciones[f'{nivel}_demografico'] = {}
-        agrupaciones_demograficas[nivel] = {}
-        
-        for var_demo in _variables_demograficas:
-            predicciones[f'{nivel}_demografico'][var_demo] = {}
-            
-            # Agrupar datos demográficos
-            columnas_grupo = ['Año', nivel, var_demo]
-            df_agrupado = _df.groupby(columnas_grupo)['Nivel de riesgo codificado'].mean().reset_index()
-            df_agrupado = df_agrupado.dropna(subset=[nivel, var_demo])
-            
-            # Hacer una copia para agregar predicciones
-            df_demo_con_pred = df_agrupado.copy()
-            
-            # Para cada combinación única de nivel y variable demográfica
-            combinaciones = df_agrupado[[nivel, var_demo]].drop_duplicates()
-            
-            for _, row in combinaciones.iterrows():
-                valor_nivel = row[nivel]
-                valor_demo = row[var_demo]
-                
-                # Filtrar datos para esta combinación específica
-                df_filtrado = df_agrupado[
-                    (df_agrupado[nivel] == valor_nivel) & 
-                    (df_agrupado[var_demo] == valor_demo)
-                ]
-                
-                if len(df_filtrado) >= 2:
-                    X = df_filtrado[['Año']].values.reshape(-1, 1)
-                    y = df_filtrado['Nivel de riesgo codificado'].values
-                    
-                    try:
-                        model = LinearRegression()
-                        model.fit(X, y)
-                        pred = model.predict([[2026]])[0]
-                        
-                        # Guardar predicción
-                        clave = f"{valor_nivel}|{valor_demo}"
-                        predicciones[f'{nivel}_demografico'][var_demo][clave] = round(pred, 2)
-                        
-                        # Agregar predicción al DataFrame demográfico
-                        nueva_fila = pd.DataFrame({
-                            'Año': [2026],
-                            nivel: [valor_nivel],
-                            var_demo: [valor_demo],
-                            'Nivel de riesgo codificado': [round(pred, 2)]
-                        })
-                        df_demo_con_pred = pd.concat([df_demo_con_pred, nueva_fila], ignore_index=True)
-                        
-                    except Exception as e:
-                        print(f"Error en predicción demográfica para {nivel}-{var_demo}: {e}")
-                        continue
-            
-            # Guardar agrupación demográfica con predicciones
-            agrupaciones_demograficas[nivel][var_demo] = df_demo_con_pred
-
-    return predicciones, datos_con_predicciones, agrupaciones_demograficas
+    with open('datos_procesados/datos_con_predicciones.pkl', 'rb') as f:
+        datos_con_predicciones = pickle.load(f)
+    
+    with open('datos_procesados/agrupaciones_demograficas.pkl', 'rb') as f:
+        agrupaciones_demograficas = pickle.load(f)
+    
+    with open('datos_procesados/variables_demograficas.pkl', 'rb') as f:
+        variables_demograficas = pickle.load(f)
+    
+    with open('datos_procesados/segmentacion.pkl', 'rb') as f:
+        segmentacion = pickle.load(f)
+    
+    df = pd.read_parquet('datos_procesados/datos_base_procesados.parquet', engine='pyarrow')
+    
+    return df, agrupaciones_base, datos_con_predicciones, agrupaciones_demograficas, variables_demograficas, segmentacion
 
 @st.cache_data
 def obtener_datos_filtrados(_datos_con_predicciones, _agrupaciones_demograficas, _domain_to_factor, _dimension_to_factor,
@@ -330,86 +173,29 @@ def obtener_color_riesgo(valor):
         return "darkred"
 
 # =========================
-# Diccionario de segmentación
+# Aplicación principal
 # =========================
-segmentacion = {
-    # Factores globales
-    'Resultado General Cuestionario Intralaboral': ('Factor Intralaboral', None, None),
-    'Puntaje Total Extralaboral': ('Factor Extralaboral', None, None),
-    'Estrés': ('Percepción del Estrés', None, None),
-    'Intralaboral + Extralaboral': ('General Intralaboral + Extralaboral', None, None),
-
-    # Intralaboral > Liderazgo y relaciones sociales en el trabajo
-    'Caracteristicas de Liderazgo': ('Factor Intralaboral', 'Liderazgo y relaciones sociales en el trabajo', 'Características de Liderazgo'),
-    'Relaciones Sociales en el Trabajo': ('Factor Intralaboral', 'Liderazgo y relaciones sociales en el trabajo', 'Relaciones Sociales en el Trabajo'),
-    'Retroalimentación del desempeño': ('Factor Intralaboral', 'Liderazgo y relaciones sociales en el trabajo', 'Retroalimentación del desempeño'),
-    'Relación con los Colaboradores': ('Factor Intralaboral', 'Liderazgo y relaciones sociales en el trabajo', 'Relación con los Colaboradores'),
-
-    # Intralaboral > Control sobre el trabajo
-    'Claridad del Rol': ('Factor Intralaboral', 'Control sobre el trabajo', 'Claridad del Rol'),
-    'Capacitación': ('Factor Intralaboral', 'Control sobre el trabajo', 'Capacitación'),
-    'Participación y Manejo del Cambio': ('Factor Intralaboral', 'Control sobre el trabajo', 'Participación y Manejo del Cambio'),
-    'Oport para el uso y desarrollo de habilidades y conocimientos Riesgo': ('Factor Intralaboral', 'Control sobre el trabajo', 'Oportunidades para el uso y desarrollo de habilidades y conocimientos Riesgo'),
-    'Control y Automia Sobre Trabajo': ('Factor Intralaboral', 'Control sobre el trabajo', 'Control y Autonomía Sobre Trabajo'),
-
-    # Intralaboral > Demandas del trabajo
-    'Demandas ambientales y de esfuerzo fisico': ('Factor Intralaboral', 'Demandas del trabajo', 'Demandas ambientales y de esfuerzo físico'),
-    'Demandas emocionales': ('Factor Intralaboral', 'Demandas del trabajo', 'Demandas emocionales'),
-    'Demandas Cuentitativas': ('Factor Intralaboral', 'Demandas del trabajo', 'Demandas Cuantitativas'),
-    'Influencia del trabajo sobre el entorno extralaboral': ('Factor Intralaboral', 'Demandas del trabajo', 'Influencia del trabajo sobre el entorno extralaboral'),
-    'Exigencias de responsabilidad del cargo': ('Factor Intralaboral', 'Demandas del trabajo', 'Exigencias de responsabilidad del cargo'),
-    'Demandas de carga mental': ('Factor Intralaboral', 'Demandas del trabajo', 'Demandas de carga mental'),
-    'Consistencia del Rol': ('Factor Intralaboral', 'Demandas del trabajo', 'Consistencia del Rol'),
-    'Demandas de la jornada de trabajo': ('Factor Intralaboral', 'Demandas del trabajo', 'Demandas de la jornada de trabajo'),
-
-    # Intralaboral > Recompensas
-    'Recompensas Derivadas de la pertenencia a la organización y del trabajo que se realiza': ('Factor Intralaboral', 'Recompensas', 'Recompensas Derivadas de la pertenencia a la organización y del trabajo que se realiza'),
-    'Reconociemiento y comensación': ('Factor Intralaboral', 'Recompensas', 'Reconocimiento y compensación'),
-
-    # Factor extralaboral
-    'Tiempo fuera del trabajo': ('Factor Extralaboral', None, 'Tiempo fuera del trabajo'),
-    'Relaciones Familiares': ('Factor Extralaboral', None, 'Relaciones Familiares'),
-    'Comunicación y Relaciones Interpersonales': ('Factor Extralaboral', None, 'Comunicación y Relaciones Interpersonales'),
-    'Situación Economica del grupo Familiar': ('Factor Extralaboral', None, 'Situación Económica del grupo Familiar'),
-    'Caracteristicas de la vivienda y su entorno': ('Factor Extralaboral', None, 'Características de la vivienda y su entorno'),
-    'Influencia del entonor extralaboral sobre el trabajo': ('Factor Extralaboral', None, 'Influencia del entorno extralaboral sobre el trabajo'),
-    'Desplazamiento Vivienda Trabajo vivienda': ('Factor Extralaboral', None, 'Desplazamiento Vivienda-Trabajo-Vivienda'),
-}
-
-# Crear mapeos para dominio y dimensión que asocien al factor
-domain_to_factor = {}
-dimension_to_factor = {}
-
-for key, (f, d, dim) in segmentacion.items():
-    if d is not None:
-        domain_to_factor[d] = f
-    if dim is not None:
-        dimension_to_factor[dim] = f
-
-# =========================
-# Interfaz de Streamlit
-# =========================
-
 def main():
     st.title("🧠 Dashboard de Análisis de Riesgo Psicosocial")
     st.subheader("📈 Tendencias y Predicciones para 2026")
     
     # =========================
-    # CARGA DE DATOS (OPTIMIZADA)
+    # CARGA SUPER RÁPIDA
     # =========================
+    with st.spinner("Cargando datos pre-procesados..."):
+        df, agrupaciones_base, datos_con_predicciones, agrupaciones_demograficas, variables_demograficas, segmentacion = cargar_datos_procesados()
     
-    # Paso 1: Cargar datos base
-    with st.spinner("Cargando datos base..."):
-        df = cargar_datos()
-        df, agrupaciones_base, variables_demograficas = procesar_datos_base(df)
+    st.success("¡Datos cargados instantáneamente! ⚡")
     
-    # Paso 2: Generar todas las predicciones una sola vez
-    with st.spinner("Generando predicciones para 2026... (esto toma unos segundos)"):
-        predicciones, datos_con_predicciones, agrupaciones_demograficas = generar_todas_predicciones(
-            df, agrupaciones_base, variables_demograficas
-        )
-    
-    st.success("¡Datos y predicciones cargados exitosamente! 🎉")
+    # Crear mapeos para dominio y dimensión que asocien al factor
+    domain_to_factor = {}
+    dimension_to_factor = {}
+
+    for key, (f, d, dim) in segmentacion.items():
+        if d is not None:
+            domain_to_factor[d] = f
+        if dim is not None:
+            dimension_to_factor[dim] = f
     
     # =========================
     # SIDEBAR PARA FILTROS
@@ -461,7 +247,7 @@ def main():
         comparar_demograficos = False
     
     # =========================
-    # GENERAR GRÁFICO (SUPER RÁPIDO AHORA)
+    # GENERAR GRÁFICO SÚPER RÁPIDO
     # =========================
     
     try:
