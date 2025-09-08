@@ -112,7 +112,7 @@ def obtener_datos_filtrados(_datos_con_predicciones, _agrupaciones_demograficas,
     
     else:
         # =============================================
-        # DATOS CON VARIABLES DEMOGRÁFICAS
+        # DATOS CON VARIABLES DEMOGRÁFICAS - CORREGIDO
         # =============================================
         
         # Determinar qué niveles mostrar
@@ -124,6 +124,7 @@ def obtener_datos_filtrados(_datos_con_predicciones, _agrupaciones_demograficas,
         if dimension_sel != 'Todos':
             niveles_a_mostrar.append(('Dimension', dimension_sel))
         
+        # Si no hay selecciones específicas, mostrar todos los niveles
         if not niveles_a_mostrar:
             niveles_a_mostrar = [('Factor', 'Todos'), ('Dominio', 'Todos'), ('Dimension', 'Todos')]
         
@@ -131,16 +132,25 @@ def obtener_datos_filtrados(_datos_con_predicciones, _agrupaciones_demograficas,
             if nivel_tipo in _agrupaciones_demograficas and var_demo in _agrupaciones_demograficas[nivel_tipo]:
                 df_demo = _agrupaciones_demograficas[nivel_tipo][var_demo].copy()
                 
-                # Aplicar filtros de nivel
+                # ========================================
+                # APLICAR FILTROS DE NIVEL
+                # ========================================
                 if nivel_valor != 'Todos':
                     df_demo = df_demo[df_demo[nivel_tipo] == nivel_valor]
                 
-                # Aplicar filtros demográficos
-                if valor_demo != 'Todos' and not comparar_demo:
+                # ========================================
+                # APLICAR FILTROS DEMOGRÁFICOS - CORREGIDO
+                # ========================================
+                if valor_demo != 'Todos':
+                    # Aplicar filtro incluso cuando comparar_demo es True
                     df_demo = df_demo[df_demo[var_demo] == valor_demo]
                 
-                # Crear grupos para el gráfico
+                # ========================================
+                # CREAR GRUPOS PARA EL GRÁFICO
+                # ========================================
                 if comparar_demo:
+                    # Si comparar_demo es True pero ya filtramos por valor_demo específico,
+                    # solo mostraremos ese valor específico en combinación con los niveles
                     df_demo['Grupo'] = df_demo[nivel_tipo].astype(str) + ' - ' + df_demo[var_demo].astype(str)
                 else:
                     df_demo['Grupo'] = df_demo[nivel_tipo]
@@ -176,6 +186,10 @@ def obtener_color_riesgo(valor):
 # Aplicación principal
 # =========================
 def main():
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.image("https://441041d6dc.imgdist.com/pub/bfra/989mykjl/3jw/n2n/7ki/Logo%20Adecco.png", width=300)
+
     st.title("🧠 Dashboard de Análisis de Riesgo Psicosocial")
     st.subheader("📈 Tendencias y Predicciones para 2026")
     
@@ -231,17 +245,43 @@ def main():
     dimensiones = ['Todos'] + dimensiones_disponibles
     dimension_seleccionada = st.sidebar.selectbox("📊 Selecciona la Dimensión:", dimensiones)
     
-    # Filtros demográficos
+    # =========================
+    # FILTROS DEMOGRÁFICOS CON NOMBRES AMIGABLES
+    # =========================
     st.sidebar.header("👥 Filtros Demográficos")
     
-    variables_demo_opciones = ['Sin filtro demográfico'] + variables_demograficas
-    variable_demografica = st.sidebar.selectbox("🧬 Variable Demográfica:", variables_demo_opciones)
+    # Crear mapeo para mostrar nombres más amigables
+    nombres_amigables = {
+        'Sexo': 'Género',  # ← Cambio visual clave
+        'Generación': 'Generación', 
+        'Rango de Edad': 'Rango de Edad', 
+        'Tipo de servicio': 'Tipo de servicio', 
+        'Seleccione tipo de cargo que mas se parece': 'Tipo de cargo', 
+        'Estrato según servicios Públicos': 'Estrato socioeconómico',
+        'Empresa': 'Empresa',
+        'Factor a Evaluar': 'Factor a Evaluar'
+    }
+    
+    # Crear opciones con nombres amigables
+    variables_demo_display = ['Sin filtro demográfico'] + [nombres_amigables.get(var, var) for var in variables_demograficas]
+    variable_demografica_display = st.sidebar.selectbox("🧬 Variable Demográfica:", variables_demo_display)
+    
+    # Convertir de vuelta al nombre real de la columna
+    if variable_demografica_display != 'Sin filtro demográfico':
+        # Buscar la clave original basada en el valor mostrado
+        variable_demografica = next(k for k, v in nombres_amigables.items() if v == variable_demografica_display)
+    else:
+        variable_demografica = 'Sin filtro demográfico'
     
     if variable_demografica != 'Sin filtro demográfico':
         valores_demo = ['Todos'] + sorted(df[variable_demografica].dropna().unique())
         valor_demografico = st.sidebar.selectbox("💡 Valor de la Variable:", valores_demo)
         
-        comparar_demograficos = st.sidebar.checkbox("📊 Comparar todos los valores de la variable seleccionada")
+        if valor_demografico == 'Todos':
+            comparar_demograficos = st.sidebar.checkbox(f"📊 Comparar todos los valores de {variable_demografica_display}")
+        else:
+            comparar_demograficos = False
+            st.sidebar.info(f"Filtrando solo por: {valor_demografico}")
     else:
         valor_demografico = 'Todos'
         comparar_demograficos = False
@@ -258,10 +298,10 @@ def main():
             variable_demografica, valor_demografico, comparar_demograficos
         )
         
-        # Crear título del gráfico
+        # Crear título del gráfico con nombre amigable
         titulo = 'Tendencia del Nivel de Riesgo'
         if variable_demografica != 'Sin filtro demográfico':
-            titulo += f' - {variable_demografica}'
+            titulo += f' - {variable_demografica_display}'  # Usar nombre amigable
             if valor_demografico != 'Todos' and not comparar_demograficos:
                 titulo += f': {valor_demografico}'
         
