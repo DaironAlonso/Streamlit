@@ -362,7 +362,7 @@ def main():
                 df_2026 = df_combinado[df_combinado['Año'] == 2026]
                 
                 if not df_2026.empty:
-                    st.subheader("🔮 Predicciones para 2026")
+                    st.subheader("Predicciones para 2026")
                     
                     # Crear tabla de predicciones
                     tabla_datos = []
