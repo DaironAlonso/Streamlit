@@ -108,6 +108,14 @@ CORREOS_ASESORAS = {
 
 CC_FIJOS = ["manuel.pimentel@adecco.com", "ingrid.bautista@adecco.com"]
 
+# CORREOS_ASESORAS = {
+#     "Neisy Bolanos":  "Manuel.Pimentel@adecco.com",
+#     "Camila Londono": "Manuel.Pimentel@adecco.com",
+#     "Jineth Cortes":  "Manuel.Pimentel@adecco.com",
+# }
+
+# CC_FIJOS = ["manuel.pimentel@adecco.com"]
+
 CIUDADES_PRINCIPALES = ["Bogota, D.C.", "Medellin", "Cali", "Barranquilla",
                          "Cartagena", "Bucaramanga", "Itagui"]
 CIUDADES_INTERMEDIAS = ["Villavicencio", "Neiva", "Ibague", "Pereira",
@@ -413,7 +421,7 @@ def diligenciar_formato_excel(datos: dict, plantilla_bytes: bytes, logo_bytes: b
 # 7. ENVÍO DE CORREO
 # ─────────────────────────────────────────────────────────────────────────────
 
-def enviar_correo(datos: dict, xlsx_bytes: bytes, hv_bytes: bytes, hv_nombre: str) -> bool:
+def enviar_correo(datos: dict, xlsx_bytes: bytes, hv_bytes: bytes | None, hv_nombre: str | None) -> bool:
     ciudad = str(datos.get("Q25", "")).strip()
     asesora, clasificacion, dias_hab = obtener_asesora_y_clasificacion(ciudad)
     fecha_entrega = calcular_fecha_entrega(dias_hab)
@@ -469,15 +477,16 @@ def enviar_correo(datos: dict, xlsx_bytes: bytes, hv_bytes: bytes, hv_nombre: st
     )
     msg.attach(parte_xlsx)
 
-    # ── Adjunto 2: PDF hoja de vida ───────────────────────────────────────
-    parte_hv = MIMEBase("application", "octet-stream")
-    parte_hv.set_payload(hv_bytes)
-    encoders.encode_base64(parte_hv)
-    parte_hv.add_header(
-        "Content-Disposition", "attachment",
-        filename=("utf-8", "", f"HojaDeVida_{hv_nombre}")
-    )
-    msg.attach(parte_hv)
+    # ── Adjunto 2: PDF hoja de vida (opcional) ────────────────────────────
+    if hv_bytes is not None and hv_nombre is not None:
+        parte_hv = MIMEBase("application", "octet-stream")
+        parte_hv.set_payload(hv_bytes)
+        encoders.encode_base64(parte_hv)
+        parte_hv.add_header(
+            "Content-Disposition", "attachment",
+            filename=("utf-8", "", f"HojaDeVida_{hv_nombre}")
+        )
+        msg.attach(parte_hv)
 
     try:
         todos = [destinatario] + cc_lista
@@ -498,7 +507,6 @@ def enviar_correo(datos: dict, xlsx_bytes: bytes, hv_bytes: bytes, hv_nombre: st
 def main():
     st.markdown("""
     <style>
-    .stApp { background-color: #f8f9fa; }
     .section-header {
         background: #016d38;
         color: white;
@@ -861,7 +869,7 @@ def main():
         if not Q11.strip():  errores.append("Correo del AGR es obligatorio.")
         if not Q25:          errores.append("Debe seleccionar una ciudad.")
         if not Q26:          errores.append("Debe seleccionar al menos un dia de servicio.")
-        if hv_pdf is None:   errores.append("Debe adjuntar el PDF de la hoja de vida.")
+        # if hv_pdf is None:   errores.append("Debe adjuntar el PDF de la hoja de vida.")
 
         if errores:
             for e in errores:
@@ -917,12 +925,15 @@ def main():
 
             xlsx_bytes = diligenciar_formato_excel(datos, plantilla_bytes, logo_bytes_env)
 
-            hv_pdf.seek(0)
-            hv_bytes  = hv_pdf.read()
-            hv_nombre = hv_pdf.name
+            if hv_pdf is not None:
+                hv_pdf.seek(0)
+                hv_bytes  = hv_pdf.read()
+                hv_nombre = hv_pdf.name
+            else:
+                hv_bytes  = None
+                hv_nombre = None
 
             exito = enviar_correo(datos, xlsx_bytes, hv_bytes, hv_nombre)
-            # exito = True
 
         asesora, clasificacion_info, dias_info = obtener_asesora_y_clasificacion(Q25)
         fecha_entrega = calcular_fecha_entrega(dias_info)
