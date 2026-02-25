@@ -101,12 +101,12 @@ TODAS_LAS_CIUDADES = sorted(GRUPO_A_NEISY + GRUPO_B_CAMILA + GRUPO_C_JINETH)
 DIAS_SEMANA = ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO", "FESTIVOS"]
 
 CORREOS_ASESORAS = {
-    "Neisy Bolanos":  "Dairon.Alonso@adecco.com",
-    "Camila Londono": "Dairon.Alonso@adecco.com",
-    "Jineth Cortes":  "Dairon.Alonso@adecco.com",
+    "Neisy Bolanos":  "arelis.bolanos@adecco.com",
+    "Camila Londono": "maria.londono@adecco.com",
+    "Jineth Cortes":  "jineth.cortes@adecco.com",
 }
 
-CC_FIJOS = ["desarrolladorbi7@gmail.com", "p7544302@gmail.com"]
+CC_FIJOS = ["manuel.pimentel@adecco.com", "ingrid.bautista@adecco.com"]
 
 CIUDADES_PRINCIPALES = ["Bogota, D.C.", "Medellin", "Cali", "Barranquilla",
                          "Cartagena", "Bucaramanga", "Itagui"]
