@@ -488,7 +488,7 @@ def enviar_correo(datos: dict, xlsx_bytes: bytes, archivos_hv: list[dict]) -> bo
         encoders.encode_base64(parte_hv)
         parte_hv.add_header(
             "Content-Disposition", "attachment",
-            filename=("utf-8", "", f"HojaDeVida_{archivo['nombre']}")
+            filename=("utf-8", "", f"{archivo['nombre']}")
         )
         msg.attach(parte_hv)
 
