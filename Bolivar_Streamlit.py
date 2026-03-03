@@ -100,21 +100,21 @@ GRUPO_C_JINETH = [
 TODAS_LAS_CIUDADES = sorted(GRUPO_A_NEISY + GRUPO_B_CAMILA + GRUPO_C_JINETH)
 DIAS_SEMANA = ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO", "FESTIVOS"]
 
-CORREOS_ASESORAS = {
-    "Neisy Bolanos":  "arelis.bolanos@adecco.com",
-    "Camila Londono": "maria.londono@adecco.com",
-    "Jineth Cortes":  "jineth.cortes@adecco.com",
-}
-
-CC_FIJOS = ["manuel.pimentel@adecco.com", "ingrid.bautista@adecco.com"]
-
 # CORREOS_ASESORAS = {
-#     "Neisy Bolanos":  "Manuel.Pimentel@adecco.com",
-#     "Camila Londono": "Manuel.Pimentel@adecco.com",
-#     "Jineth Cortes":  "Manuel.Pimentel@adecco.com",
+#     "Neisy Bolanos":  "arelis.bolanos@adecco.com",
+#     "Camila Londono": "maria.londono@adecco.com",
+#     "Jineth Cortes":  "jineth.cortes@adecco.com",
 # }
 
-# CC_FIJOS = ["manuel.pimentel@adecco.com"]
+# CC_FIJOS = ["manuel.pimentel@adecco.com", "ingrid.bautista@adecco.com"]
+
+CORREOS_ASESORAS = {
+    "Neisy Bolanos":  "desarrolladorbi7@gmail.com",
+    "Camila Londono": "desarrolladorbi7@gmail.com",
+    "Jineth Cortes":  "desarrolladorbi7@gmail.com",
+}
+
+CC_FIJOS = ["desarrolladorbi7@gmail.com"]
 
 CIUDADES_PRINCIPALES = ["Bogota, D.C.", "Medellin", "Cali", "Barranquilla",
                          "Cartagena", "Bucaramanga", "Itagui"]
@@ -394,11 +394,14 @@ def diligenciar_formato_excel(datos: dict, plantilla_bytes: bytes, logo_bytes: b
         "Q89": "AG114","Q90": "AG116",
         "Q70": "AG80",
         "Q86": "AG110",
+        "Q92":"AG118"
     }
     fill_si_no_block(extras_map, 3)
 
     # ── VI. Recomendaciones ────────────────────────────────────────────────
-    get_master_cell(ws, "A119").value = row.get("Q91", "")
+    get_master_cell(ws, "A122").value = row.get("Q91", "")
+    get_master_cell(ws, "Z119").value = row.get("Q93", "")
+    
 
     # ── Logo ───────────────────────────────────────────────────────────────
     if logo_bytes:
@@ -421,7 +424,7 @@ def diligenciar_formato_excel(datos: dict, plantilla_bytes: bytes, logo_bytes: b
 # 7. ENVÍO DE CORREO
 # ─────────────────────────────────────────────────────────────────────────────
 
-def enviar_correo(datos: dict, xlsx_bytes: bytes, hv_bytes: bytes | None, hv_nombre: str | None) -> bool:
+def enviar_correo(datos: dict, xlsx_bytes: bytes, archivos_hv: list[dict]) -> bool:
     ciudad = str(datos.get("Q25", "")).strip()
     asesora, clasificacion, dias_hab = obtener_asesora_y_clasificacion(ciudad)
     fecha_entrega = calcular_fecha_entrega(dias_hab)
@@ -478,13 +481,14 @@ def enviar_correo(datos: dict, xlsx_bytes: bytes, hv_bytes: bytes | None, hv_nom
     msg.attach(parte_xlsx)
 
     # ── Adjunto 2: PDF hoja de vida (opcional) ────────────────────────────
-    if hv_bytes is not None and hv_nombre is not None:
+    # Adjuntos: PDFs hojas de vida (uno o varios)
+    for archivo in archivos_hv:
         parte_hv = MIMEBase("application", "octet-stream")
-        parte_hv.set_payload(hv_bytes)
+        parte_hv.set_payload(archivo["bytes"])
         encoders.encode_base64(parte_hv)
         parte_hv.add_header(
             "Content-Disposition", "attachment",
-            filename=("utf-8", "", f"HojaDeVida_{hv_nombre}")
+            filename=("utf-8", "", f"HojaDeVida_{archivo['nombre']}")
         )
         msg.attach(parte_hv)
 
@@ -838,21 +842,34 @@ def main():
     with c2: Q90 = st.selectbox("Curso espacios confinados", ["NO", "SI"])
 
     # ── VI. Recomendaciones ────────────────────────────────────────────────
-    st.markdown('<div class="section-header">VI. RECOMENDACIONES PARA TENER EN CUENTA DURANTE EL PROCESO</div>',
+    st.markdown('<div class="section-header">VI. EXAMANES ESPECIALIZADOS</div>',
+                unsafe_allow_html=True)
+    c1, c2 = st.columns(2)
+    with c1: Q92 = st.selectbox("¿El profesional seleccionado requiere examenes de ingreso especializados?", ["NO", "SI"])
+    with c2:
+        if Q92 == "SI":
+            Q93 = st.text_input("¿Cuales?")
+        else:
+            Q93 = ""
+
+    # ── VII. Recomendaciones ────────────────────────────────────────────────
+    st.markdown('<div class="section-header">VII. RECOMENDACIONES PARA TENER EN CUENTA DURANTE EL PROCESO</div>',
                 unsafe_allow_html=True)
     Q91 = st.text_area("Recomendaciones generales")
 
-    # ── VII. Hoja de vida (PDF) ────────────────────────────────────────────
-    st.markdown('<div class="section-header">VII. HOJA DE VIDA DEL CANDIDATO</div>',
+    # ── VIII. Hoja de vida (PDF) ────────────────────────────────────────────
+    st.markdown('<div class="section-header">VIII. HOJA DE VIDA DEL CANDIDATO</div>',
                 unsafe_allow_html=True)
-    hv_pdf = st.file_uploader(
-        "Adjuntar hoja de vida (PDF) *",
+    hv_pdfs = st.file_uploader(
+        "Adjuntar hoja(s) de vida (PDF) *",
         type=["pdf"],
-        help="Solo se aceptan archivos en formato PDF. Tamaño máximo: 200 MB.",
+        accept_multiple_files=True,          # ← clave del cambio
+        help="Puedes adjuntar uno o varios archivos PDF. Tamaño máximo por archivo: 200 MB.",
         key="hoja_de_vida"
     )
-    if hv_pdf is not None:
-        st.success(f"✅ Archivo cargado: **{hv_pdf.name}** ({hv_pdf.size / 1024:.1f} KB)")
+    if hv_pdfs:
+        for f in hv_pdfs:
+            st.success(f"✅ Archivo cargado: **{f.name}** ({f.size / 1024:.1f} KB)")
 
     st.divider()
 
@@ -914,6 +931,7 @@ def main():
                 "Q89": Q89,   "Q90": Q90,
                 "Q91": Q91,
                 "agr_data": agr_data if Q22 == "INTERDISCIPLINARIO" else [],
+                "Q92": Q92,   "Q93": Q93,
             }
 
             logo_bytes_env = obtener_logo()
@@ -925,15 +943,14 @@ def main():
 
             xlsx_bytes = diligenciar_formato_excel(datos, plantilla_bytes, logo_bytes_env)
 
-            if hv_pdf is not None:
-                hv_pdf.seek(0)
-                hv_bytes  = hv_pdf.read()
-                hv_nombre = hv_pdf.name
-            else:
-                hv_bytes  = None
-                hv_nombre = None
+            archivos_hv = []
+            if hv_pdfs:
+                for f in hv_pdfs:
+                    f.seek(0)
+                    archivos_hv.append({"bytes": f.read(), "nombre": f.name})
 
-            exito = enviar_correo(datos, xlsx_bytes, hv_bytes, hv_nombre)
+            exito = enviar_correo(datos, xlsx_bytes, archivos_hv)
+            # exito = True
 
         asesora, clasificacion_info, dias_info = obtener_asesora_y_clasificacion(Q25)
         fecha_entrega = calcular_fecha_entrega(dias_info)
