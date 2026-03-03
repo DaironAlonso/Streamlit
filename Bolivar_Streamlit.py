@@ -861,7 +861,7 @@ def main():
     st.markdown('<div class="section-header">VIII. HOJA DE VIDA DEL CANDIDATO</div>',
                 unsafe_allow_html=True)
     hv_pdfs = st.file_uploader(
-        "Adjuntar hoja(s) de vida (PDF) *",
+        "Adjuntar archivos(PDF)",
         type=["pdf"],
         accept_multiple_files=True,          # ← clave del cambio
         help="Puedes adjuntar uno o varios archivos PDF. Tamaño máximo por archivo: 200 MB.",
