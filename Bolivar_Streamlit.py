@@ -70,56 +70,160 @@ EXPERIENCIA_ANIOS = [
 ]
 
 GRUPO_A_NEISY = [
-    "Apia", "Armenia", "Belen De Umbria", "Circasia", "Dosquebradas", "Manizales",
-    "Marmato", "Pereira", "Santa Rosa De Cabal", "Viterbo",
-    "Barranquilla", "Cartagena", "Chiriguana", "El Paso", "Galapa", "Malambo",
-    "Monteria", "Palmar de Varela", "Puerto Colombia", "Santa Marta", "Santo Tomas",
-    "Sincelejo", "Soledad", "Turbaco", "Valledupar",
-    "Acacias", "Castilla La Nueva", "Guamal", "Puerto Gaitan", "Villavicencio"
+    "Apia",
+    "Armenia",
+    "Belen De Umbria",
+    "Circasia",
+    "Dosquebradas",
+    "Manizales",
+    "Marmato",
+    "Pereira",
+    "Santa Rosa De Cabal",
+    "Viterbo",
+    "Barranquilla",
+    "Cartagena",
+    "Chiriguana",
+    "El Paso",
+    "Galapa",
+    "Malambo",
+    "Monteria",
+    "Palmar de Varela",
+    "Puerto Colombia",
+    "Santa Marta",
+    "Santo Tomas",
+    "Sincelejo",
+    "Soledad",
+    "Turbaco",
+    "Valledupar",
+    "Acacias",
+    "Castilla La Nueva",
+    "Guamal",
+    "Puerto Gaitan",
+    "Villavicencio",
 ]
-
+ 
 GRUPO_B_CAMILA = [
-    "Amaga", "Apartado", "Bello", "Buritica", "Caldas", "Cisneros", "Copacabana",
-    "El Carmen de Atrato", "Envigado", "Girardota", "Guarne", "Itagui", "La Estrella",
-    "La Union", "Medellin", "Remedios", "Rionegro", "Sabaneta", "San Pedro De Los Milagros",
-    "Santa Barbara", "Santafe De Antioquia", "Segovia",
-    "Buenaventura", "Cali", "Cartago", "Dagua", "Jamundi", "Palmira", "Yumbo",
-    "Popayan"
+    "Amaga",
+    "Apartado",
+    "Bello",
+    "Buritica",
+    "Caldas",
+    "Cisneros",
+    "Copacabana",
+    "El Bagre",
+    "Envigado",
+    "Girardota",
+    "Guarne",
+    "Itagui",
+    "La Estrella",
+    "La Union",
+    "Medellin",
+    "Remedios",
+    "Rionegro",
+    "Sabaneta",
+    "San Pedro De Los Milagros",
+    "Santa Barbara",
+    "Santafe De Antioquia",
+    "Segovia",
+    "Buenaventura",
+    "Cali",
+    "Cartago",
+    "Dagua",
+    "Jamundi",
+    "Palmira",
+    "Yumbo",
 ]
-
+ 
 GRUPO_C_JINETH = [
-    "Aguazul", "Anapoima", "Barrancabermeja", "Bogota, D.C.", "Bucaramanga", "Cajica",
-    "Chia", "Cota", "Cucuta", "Duitama", "Facatativa", "Floridablanca", "Funza",
-    "Fusagasuga", "Gachancipa", "Giron", "Granada", "Ibague", "La Calera", "Los Patios",
-    "Los Santos", "Madrid", "Mitu", "Mosquera", "Neiva", "Palermo", "Piedecuesta",
-    "Quibdo", "Riohacha", "Santa Maria", "Sibate", "Siberia", "Soacha", "Sogamoso",
-    "Sopo", "Tenjo", "Tocancipa", "Tunja", "Usaquen", "Villa Rica", "Villanueva",
-    "Villapinzon", "Villeta", "Yopal", "Zipaquira"
+    "Aguazul",
+    "Anapoima",
+    "Bogota, D.C.",
+    "Cajica",
+    "Chia",
+    "Cota",
+    "Cucuta",
+    "Facatativa",
+    "Funza",
+    "Fusagasuga",
+    "Gachancipa",
+    "Granada",
+    "La Calera",
+    "Los Patios",
+    "Madrid",
+    "Mitu",
+    "Mosquera",
+    "Riohacha",
+    "Sibate",
+    "Siberia",
+    "Soacha",
+    "Sopo",
+    "Tenjo",
+    "Tocancipa",
+    "Usaquen",
+    "Villanueva",
+    "Villapinzon",
+    "Villeta",
+    "Yopal",
+    "Zipaquira",
+]
+ 
+GRUPO_D_LIZETH = [
+    "El Carmen de Atrato",
+    "Popayan",
+    "Villa Rica",
+    "Barrancabermeja",
+    "Bucaramanga",
+    "Floridablanca",
+    "Giron",
+    "Los Santos",
+    "Piedecuesta",
+    "Duitama",
+    "Sogamoso",
+    "Tunja",
+    "Ibague",
+    "Neiva",
+    "Palermo",
+    "Santa Maria",
+    "Quibdo",
+    "Pasto",
+    "Ipiales",
+    "Tumaco",
+    "La Union Narino",
+    "Samaniego",
+    "Tuquerres",
 ]
 
-TODAS_LAS_CIUDADES = sorted(GRUPO_A_NEISY + GRUPO_B_CAMILA + GRUPO_C_JINETH)
+TODAS_LAS_CIUDADES = sorted(GRUPO_A_NEISY + GRUPO_B_CAMILA + GRUPO_C_JINETH + GRUPO_D_LIZETH)
 DIAS_SEMANA = ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO", "FESTIVOS"]
 
 CORREOS_ASESORAS = {
     "Neisy Bolanos":  "arelis.bolanos@adecco.com",
     "Camila Londono": "maria.londono@adecco.com",
     "Jineth Cortes":  "jineth.cortes@adecco.com",
+    "Lizeth Garzon":  "Lizeth.GarzonZ@adecco.com", 
 }
 
-CC_FIJOS = ["manuel.pimentel@adecco.com", "ingrid.bautista@adecco.com"]
+CC_FIJOS = ["manuel.pimentelA@adecco.com", "ingrid.bautista@adecco.com"]
 
 # CORREOS_ASESORAS = {
 #     "Neisy Bolanos":  "desarrolladorbi7@gmail.com",
 #     "Camila Londono": "desarrolladorbi7@gmail.com",
 #     "Jineth Cortes":  "desarrolladorbi7@gmail.com",
+#     "Lizeth Garzon":  "desarrolladorbi7@gmail.com",
 # }
 
 # CC_FIJOS = ["desarrolladorbi7@gmail.com"]
 
-CIUDADES_PRINCIPALES = ["Bogota, D.C.", "Medellin", "Cali", "Barranquilla",
-                         "Cartagena", "Bucaramanga", "Itagui"]
-CIUDADES_INTERMEDIAS = ["Villavicencio", "Neiva", "Ibague", "Pereira",
-                         "Manizales", "Armenia", "Cucuta"]
+CIUDADES_PRINCIPALES = [
+    "Bogota, D.C.", "Medellin", "Cali", "Barranquilla",
+    "Cartagena", "Bucaramanga", "Itagui"
+]
+ 
+CIUDADES_INTERMEDIAS = [
+    "Villavicencio", "Neiva", "Ibague", "Pereira",
+    "Manizales", "Armenia", "Cucuta",
+    "Pasto", "Buenaventura", "Tunja"
+]
 
 TIEMPOS_RESPUESTA = {"PRINCIPAL": 5, "INTERMEDIA": 7, "ALEJADA": 9}
 
@@ -152,8 +256,10 @@ def obtener_asesora_y_clasificacion(ciudad: str):
         asesora = "Neisy Bolanos"
     elif ciudad in GRUPO_B_CAMILA:
         asesora = "Camila Londono"
-    else:
+    elif ciudad in GRUPO_C_JINETH:
         asesora = "Jineth Cortes"
+    elif ciudad in GRUPO_D_LIZETH:
+        asesora = "Lizeth Garzon"
 
     if ciudad in CIUDADES_PRINCIPALES:
         clasificacion = "PRINCIPAL"
