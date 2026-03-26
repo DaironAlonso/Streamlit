@@ -438,7 +438,7 @@ def diligenciar_formato_excel(datos: dict, plantilla_bytes: bytes, logo_bytes: b
 
     sc(ws, "G43", row.get("Q27", ""))   # Horario
 
-    opciones_riesgo = {1: "H45", 2: "K45", 3: "M45", 4: "P45", 5: "S45"}
+    opciones_riesgo = {1: "H45", 2: "K45", 3: "N45", 4: "Q45", 5: "T45"}
     try:
         riesgo = int(row.get("Q28", 0))
         if riesgo in opciones_riesgo:
