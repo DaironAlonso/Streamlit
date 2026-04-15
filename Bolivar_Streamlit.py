@@ -100,6 +100,7 @@ GRUPO_A_NEISY = [
     "Guamal",
     "Puerto Gaitan",
     "Villavicencio",
+    "Yopal",
 ]
  
 GRUPO_B_CAMILA = [
@@ -163,7 +164,6 @@ GRUPO_C_JINETH = [
     "Villanueva",
     "Villapinzon",
     "Villeta",
-    "Yopal",
     "Zipaquira",
 ]
  
