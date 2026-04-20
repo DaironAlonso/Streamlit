@@ -359,9 +359,9 @@ def calcular_agotados_desde_df(df_filtro, pais, filtered_df):
     df_ag = df_ag.drop_duplicates(subset='GMID').reset_index(drop=True)
 
     if pais in ['Colombia', 'Ecuador']:
-        df_resultado = df_ag[['EAN Code', 'Canal', 'GMID', 'PLU', 'Local Description']].rename(columns={
+        df_resultado = df_ag[['EAN Code', 'Canal cliente DS', 'GMID', 'PLU', 'Local Description']].rename(columns={
             'EAN Code':          'EAN',
-            'Canal':             'CANAL',
+            'Canal cliente DS':             'CANAL',
             'Local Description': 'Descripción'
         })
     elif pais == 'Argentina':
@@ -369,8 +369,8 @@ def calcular_agotados_desde_df(df_filtro, pais, filtered_df):
             'Local Description': 'Descripción'
         })
     else:
-        df_resultado = df_ag[['Canal', 'GMID', 'PLU', 'Local Description']].rename(columns={
-            'Canal':             'CANAL',
+        df_resultado = df_ag[['Canal cliente DS', 'GMID', 'PLU', 'Local Description']].rename(columns={
+            'Canal cliente DS':             'CANAL',
             'Local Description': 'Descripción'
         })
 
@@ -447,7 +447,7 @@ def preparar_df_clientes(df_clientes_raw, pais, df_maestra_h1, df_maestra_h2, df
         df['KeyPLU'] = (
             df['Sold_To_int'].astype(int).astype(str) +
             df['EAN_Code_int'].astype(int).astype(str) +
-            df['Canal'].astype(str)
+            df['Canal cliente DS'].astype(str)
         )
     elif pais == 'Argentina':
         df['KeyPLU'] = (
