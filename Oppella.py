@@ -358,6 +358,13 @@ def calcular_agotados_desde_df(df_filtro, pais, filtered_df):
 
     df_ag = df_ag.drop_duplicates(subset='GMID').reset_index(drop=True)
 
+    # ✅ FIX: Limpiar .0 de columnas numéricas antes de armar el resultado
+    for col in ['EAN Code', 'GMID', 'PLU']:
+        if col in df_ag.columns:
+            df_ag[col] = pd.to_numeric(df_ag[col], errors='coerce').apply(
+                lambda x: str(int(x)) if pd.notna(x) else ''
+            )
+
     if pais in ['Colombia', 'Ecuador']:
         df_resultado = df_ag[['EAN Code', 'Canal cliente DS', 'GMID', 'PLU', 'Local Description']].rename(columns={
             'EAN Code':          'EAN',
@@ -378,7 +385,14 @@ def calcular_agotados_desde_df(df_filtro, pais, filtered_df):
     df_resultado['Fecha Estimada de Disponibilidad'] = ''
 
     if filtered_df is not None and not filtered_df.empty:
-        merge_f = filtered_df[['GMID', 'Available for Invoicing']].drop_duplicates()
+        merge_f = filtered_df[['GMID', 'Available for Invoicing']].drop_duplicates().copy()
+
+        # ✅ FIX: Normalizar GMID a string sin .0 en ambos DataFrames antes del merge
+        merge_f['GMID'] = pd.to_numeric(merge_f['GMID'], errors='coerce').apply(
+            lambda x: str(int(x)) if pd.notna(x) else ''
+        )
+        df_resultado['GMID'] = df_resultado['GMID'].astype(str).str.replace(r'\.0$', '', regex=True).str.strip()
+
         df_resultado = df_resultado.merge(merge_f, on='GMID', how='left')
         df_resultado['Fecha Estimada de Disponibilidad'] = (
             df_resultado['Available for Invoicing'].apply(procesar_fecha)
@@ -468,8 +482,16 @@ def preparar_df_clientes(df_clientes_raw, pais, df_maestra_h1, df_maestra_h2, df
     df['Status'] = df['Definition']
     df.drop(['Code', 'Definition'], axis=1, inplace=True)
 
+    # ✅ FIX: Limpiar el KeyPLU de la maestra (puede tener .0 del Excel)
+    df_maestra_h1['KeyPLU'] = (
+        df_maestra_h1['KeyPLU']
+        .astype(str)
+        .str.replace(r'\.0', '', regex=True)
+        .str.strip()
+    )
+
     df = df.merge(df_maestra_h1[['KeyPLU', 'PLU']],
-                  on='KeyPLU', how='left', suffixes=('', '_maestro'))
+                on='KeyPLU', how='left', suffixes=('', '_maestro'))
     df['PLU'] = df['PLU_maestro'].fillna(df['PLU'])
     df.drop('PLU_maestro', axis=1, inplace=True)
 
