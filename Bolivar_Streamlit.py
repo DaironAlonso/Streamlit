@@ -101,6 +101,7 @@ GRUPO_A_NEISY = [
     "Puerto Gaitan",
     "Villavicencio",
     "Yopal",
+    "Tauramena"
 ]
  
 GRUPO_B_CAMILA = [
