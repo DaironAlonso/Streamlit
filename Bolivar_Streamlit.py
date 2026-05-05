@@ -759,7 +759,7 @@ def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
     wb.save(output)
     output.seek(0)
 
-    nombre_archivo = f"Solicitud plano.xlsx"
+    nombre_archivo = f"{id_sol}_Solicitud plano.xlsx"
     return nombre_archivo, output.read()
 
 
