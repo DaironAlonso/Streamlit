@@ -19,8 +19,9 @@ from email import encoders
 import openpyxl
 from openpyxl.drawing.image import Image as XLImage
 from openpyxl.utils.cell import coordinate_from_string
-from openpyxl.utils import column_index_from_string as col_idx
+from openpyxl.utils import column_index_from_string as col_idx, get_column_letter
 import urllib.request
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -205,6 +206,14 @@ CORREOS_ASESORAS = {
 }
 
 CC_FIJOS = ["manuel.pimentelA@adecco.com", "ingrid.bautista@adecco.com"]
+DESTINATARIOS_ARCHIVO_PLANO = [
+    "MichaelE.Brochero@adecco.com",
+    "manuel.pimentelA@adecco.com",
+]
+
+# DESTINATARIOS_ARCHIVO_PLANO = [
+#     "dairon.alonsoh@adecco.com",
+# ]
 
 # CORREOS_ASESORAS = {
 #     "Neisy Bolanos":  "desarrolladorbi7@gmail.com",
@@ -608,6 +617,186 @@ def enviar_correo(datos: dict, xlsx_bytes: bytes, archivos_hv: list[dict]) -> bo
         return True
     except Exception as e:
         st.error(f"Error al enviar correo: {e}")
+        return False
+
+
+def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
+    id_sol   = str(datos.get("id_solicitud", "N/A"))
+    agr_data = datos.get("agr_data", [])
+
+    # ── Construir AGR dinámico ─────────────────────────────────────────────
+    agr_cols = {}
+    if agr_data:
+        for i, agr in enumerate(agr_data, start=1):
+            agr_cols[f"AGR_{i}_NOMBRE"]          = agr.get("agr",   "")
+            agr_cols[f"AGR_{i}_HORAS_MENSUALES"] = agr.get("horas", "")
+    else:
+        agr_cols["SIN_DETALLE_AGR"] = "SI"
+
+    # ── Definir columnas fijas ─────────────────────────────────────────────
+    columnas = {
+        "ID_SOLICITUD":                        id_sol,
+        "FECHA":                               datos.get("Q2",  ""),
+        "TIPO_SOLICITUD":                      datos.get("Q6",  ""),
+        "TRABAJADOR_REEMPLAZAR":               datos.get("Q7",  ""),
+        "RAZON_SOCIAL_EMPRESA":                datos.get("Q8",  ""),
+        "NIT_EMPRESA":                         datos.get("Q9",  ""),
+        "AGR_SOLICITANTE":                     datos.get("Q10", ""),
+        "CORREO_AGR":                          datos.get("Q11", ""),
+        "CELULAR_AGR":                         datos.get("Q12", ""),
+        "DIRECCION_SECTORIAL":                 datos.get("Q13", ""),
+        "DIRECTOR_SECTORIAL":                  datos.get("Q14", ""),
+        "PERFIL":                              datos.get("Q15", ""),
+        "EXPERIENCIA_REQUERIDA":               datos.get("Q20", ""),
+        "SALARIO_FUERA_TABLA":                 datos.get("Q21", ""),
+        "TIPO_ASIGNACION":                     datos.get("Q22", ""),
+        "TIEMPO_SERVICIO":                     datos.get("Q23", ""),
+        "NUMERO_VACANTES":                     datos.get("Q24", ""),
+        "CIUDAD_SERVICIO":                     datos.get("Q25", ""),
+        "DIAS_SERVICIO":                       datos.get("Q26", ""),
+        "HORARIO_SERVICIO":                    datos.get("Q27", ""),
+        "CLASE_RIESGO":                        datos.get("Q28", ""),
+        "SECTOR_ECONOMICO":                    datos.get("Q29", ""),
+        "TRANSPORTE_PROPIO":                   datos.get("Q30", ""),
+        "AUXILIO_TRANSPORTE_PROPIO":           datos.get("Q31", ""),
+        **agr_cols,
+        "TRANSPORTE_URBANO":                   datos.get("Q32", ""),
+        "FRECUENCIA_TRANSPORTE_URBANO":        datos.get("Q33", ""),
+        "VALOR_TRANSPORTE_URBANO":             datos.get("Q34", ""),
+        "TRANSPORTE_INTERMUNICIPAL":           datos.get("Q35", ""),
+        "FRECUENCIA_TRANSPORTE_INTERMUNICIPAL":datos.get("Q36", ""),
+        "VALOR_TRANSPORTE_INTERMUNICIPAL":     datos.get("Q37", ""),
+        "COMUNICACION":                        datos.get("Q38", ""),
+        "FRECUENCIA_COMUNICACION":             datos.get("Q39", ""),
+        "VALOR_COMUNICACION":                  datos.get("Q40", ""),
+        "OTRO_AUXILIO":                        datos.get("Q41", ""),
+        "OTRO_AUXILIO_CUAL":                   datos.get("Q42_texto", ""),
+        "OTRO_AUXILIO_FRECUENCIA":             datos.get("Q43_frec",  ""),
+        "OTRO_AUXILIO_VALOR":                  datos.get("Q44_valor", ""),
+        "PRUEBA_TECNICA_PROFESION_BASE":       datos.get("Q56", ""),
+        "PRUEBA_OFIMATICA":                    datos.get("Q57", ""),
+        "PRUEBA_TECNICA_SIG":                  datos.get("Q58", ""),
+        "ORIENTACION_RESULTADOS":              datos.get("Q59", ""),
+        "ORIENTACION_CLIENTE":                 datos.get("Q60", ""),
+        "ANALISIS_SOLUCION_PROBLEMAS":         datos.get("Q61", ""),
+        "ADAPTACION_CAMBIO":                   datos.get("Q62", ""),
+        "AUTOMANEJO_AUTODESARROLLO":           datos.get("Q63", ""),
+        "COMUNICACION_COMPETENCIA":            datos.get("Q64", ""),
+        "TRABAJO_EN_EQUIPO":                   datos.get("Q65", ""),
+        "DESARROLLO_RELACIONES":               datos.get("Q66", ""),
+        "LIDERAR_EQUIPOS":                     datos.get("Q67", ""),
+        "PLANIFICACION_ESTRATEGICA":           datos.get("Q68", ""),
+        "OTRA_COMPETENCIA":                    datos.get("Q70", ""),
+        "DESCRIPCION_OTRA_COMPETENCIA":        datos.get("Q71_extra", ""),
+        "EPP_CASCO_DIELECTRICO":               datos.get("Q72", ""),
+        "EPP_CASCO_BARBUQUEJO":                datos.get("Q73", ""),
+        "EPP_PROTECTOR_AUDITIVO_COPA":         datos.get("Q74", ""),
+        "EPP_PROTECTOR_AUDITIVO_INSERCION":    datos.get("Q75", ""),
+        "EPP_MONOGAFA":                        datos.get("Q76", ""),
+        "EPP_PROTECCION_RESPIRATORIA":         datos.get("Q77", ""),
+        "EPP_PROTECCION_VISUAL":               datos.get("Q78", ""),
+        "DOTACION_UNIFORME_ANTIFLUIDO":        datos.get("Q79", ""),
+        "DOTACION_CHAQUETA":                   datos.get("Q80", ""),
+        "DOTACION_CAMISA":                     datos.get("Q81", ""),
+        "DOTACION_JEAN":                       datos.get("Q82", ""),
+        "DOTACION_BOTAS_ANTIDESLIZANTE":       datos.get("Q83", ""),
+        "DOTACION_BOTAS_ANTIPERFORANTE":       datos.get("Q84", ""),
+        "OTRA_DOTACION":                       datos.get("Q86", ""),
+        "DESCRIPCION_OTRA_DOTACION":           datos.get("Q86_texto", ""),
+        "EQUIPO_COMPUTO_BASICO":               datos.get("Q87", ""),
+        "EQUIPO_COMPUTO_MAYOR_CAPACIDAD":      datos.get("Q88", ""),
+        "CURSO_ALTURAS":                       datos.get("Q89", ""),
+        "CURSO_ESPACIOS_CONFINADOS":           datos.get("Q90", ""),
+        "REQUIERE_EXAMENES_INGRESO":           datos.get("Q92", ""),
+        "EXAMENES_CUALES":                     datos.get("Q93", ""),
+        "RECOMENDACIONES_GENERALES":           datos.get("Q91", ""),
+    }
+
+    # ── Crear Excel ────────────────────────────────────────────────────────
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Solicitud"
+
+    font_header = Font(bold=True, color="FFFFFF", size=10)
+    fill_header = PatternFill("solid", fgColor="016D38")
+    font_valor  = Font(size=10)
+    fill_valor  = PatternFill("solid", fgColor="F9F9F9")
+    borde = Border(
+        left=Side(style="thin"), right=Side(style="thin"),
+        top=Side(style="thin"),  bottom=Side(style="thin")
+    )
+    align_header = Alignment(horizontal="center", vertical="center",
+                             wrap_text=True, text_rotation=90)
+    align_valor  = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+    # Fila 1 → headers | Fila 2 → valores
+    for col_idx, (header, valor) in enumerate(columnas.items(), start=1):
+        # Header
+        ch = ws.cell(row=1, column=col_idx, value=header)
+        ch.font      = font_header
+        ch.fill      = fill_header
+        ch.alignment = align_header
+        ch.border    = borde
+
+        # Valor
+        cv = ws.cell(row=2, column=col_idx, value=str(valor) if valor is not None else "")
+        cv.font      = font_valor
+        cv.fill      = fill_valor
+        cv.alignment = align_valor
+        cv.border    = borde
+
+        # Ancho de columna
+        ws.column_dimensions[get_column_letter(col_idx)].width = 18
+
+    # Alto de filas
+    ws.row_dimensions[1].height = 80   # headers rotados 90°
+    ws.row_dimensions[2].height = 25
+
+    # Freeze header row
+    ws.freeze_panes = "A2"
+
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    nombre_archivo = f"Solicitud plano.xlsx"
+    return nombre_archivo, output.read()
+
+
+def enviar_archivo_plano(datos: dict) -> bool:
+    nombre_archivo, excel_bytes = generar_excel_plano(datos)
+    id_sol = str(datos.get("id_solicitud", "N/A"))
+    ciudad = str(datos.get("Q25", "")).strip()
+    perfil = str(datos.get("Q15", "")).strip()
+
+    msg = MIMEMultipart()
+    msg["From"]    = EMAIL_USER
+    msg["To"]      = "; ".join(DESTINATARIOS_ARCHIVO_PLANO)
+    msg["Subject"] = f"Archivo plano solicitud outsourcing"
+
+    cuerpo = (
+        f"Se adjunta el resumen en Excel de la solicitud de outsourcing"
+    )
+    msg.attach(MIMEText(cuerpo, "plain", "utf-8"))
+
+    # Adjunto Excel
+    parte_xlsx = MIMEBase("application", "octet-stream")
+    parte_xlsx.set_payload(excel_bytes)
+    encoders.encode_base64(parte_xlsx)
+    parte_xlsx.add_header(
+        "Content-Disposition", "attachment",
+        filename=("utf-8", "", nombre_archivo)
+    )
+    msg.attach(parte_xlsx)
+
+    try:
+        with smtplib.SMTP("smtp.gmail.com", 587) as servidor:
+            servidor.starttls()
+            servidor.login(EMAIL_USER, EMAIL_PASS)
+            servidor.sendmail(EMAIL_USER, DESTINATARIOS_ARCHIVO_PLANO, msg.as_string())
+        return True
+    except Exception as e:
+        st.error(f"Error al enviar archivo plano: {e}")
         return False
 
 
@@ -1057,17 +1246,22 @@ def main():
                     archivos_hv.append({"bytes": f.read(), "nombre": f.name})
 
             exito = enviar_correo(datos, xlsx_bytes, archivos_hv)
+            exito_plano = enviar_archivo_plano(datos)
             # exito = True
 
         asesora, clasificacion_info, dias_info = obtener_asesora_y_clasificacion(Q25)
         fecha_entrega = calcular_fecha_entrega(dias_info)
         nombre_base   = f"{id_sol} - {Q15} en {Q25}"
 
-        if exito:
+        if exito and exito_plano:
             st.success(f"✅ Solicitud **{id_sol}** enviada exitosamente a **{asesora}**.")
             st.balloons()
+        elif exito and not exito_plano:
+            st.warning("⚠️ La solicitud principal fue enviada, pero falló el envío del archivo plano.")
+        elif (not exito) and exito_plano:
+            st.warning("⚠️ Se envió el archivo plano, pero hubo un problema en el correo principal.")
         else:
-            st.warning("⚠️ Solicitud procesada pero hubo un problema al enviar el correo.")
+            st.warning("⚠️ Solicitud procesada pero hubo problemas en los envíos de correo.")
 
         st.markdown(f"""
         <div class="info-box">
