@@ -23,7 +23,6 @@ from openpyxl.utils import column_index_from_string as col_idx, get_column_lette
 import urllib.request
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 
-
 # ─────────────────────────────────────────────────────────────────────────────
 # 1. CONFIGURACIÓN GENERAL
 # ─────────────────────────────────────────────────────────────────────────────
@@ -71,128 +70,38 @@ EXPERIENCIA_ANIOS = [
 ]
 
 GRUPO_A_NEISY = [
-    "Apia",
-    "Armenia",
-    "Belen De Umbria",
-    "Circasia",
-    "Dosquebradas",
-    "Manizales",
-    "Marmato",
-    "Pereira",
-    "Santa Rosa De Cabal",
-    "Viterbo",
-    "Barranquilla",
-    "Cartagena",
-    "Chiriguana",
-    "El Paso",
-    "Galapa",
-    "Malambo",
-    "Monteria",
-    "Palmar de Varela",
-    "Puerto Colombia",
-    "Santa Marta",
-    "Santo Tomas",
-    "Sincelejo",
-    "Soledad",
-    "Turbaco",
-    "Valledupar",
-    "Acacias",
-    "Castilla La Nueva",
-    "Guamal",
-    "Puerto Gaitan",
-    "Villavicencio",
-    "Yopal",
-    "Tauramena"
+    "Apia", "Armenia", "Belen De Umbria", "Circasia", "Dosquebradas",
+    "Manizales", "Marmato", "Pereira", "Santa Rosa De Cabal", "Viterbo",
+    "Barranquilla", "Cartagena", "Chiriguana", "El Paso", "Galapa",
+    "Malambo", "Monteria", "Palmar de Varela", "Puerto Colombia", "Santa Marta",
+    "Santo Tomas", "Sincelejo", "Soledad", "Turbaco", "Valledupar",
+    "Acacias", "Castilla La Nueva", "Guamal", "Puerto Gaitan",
+    "Villavicencio", "Yopal", "Tauramena"
 ]
- 
+
 GRUPO_B_CAMILA = [
-    "Amaga",
-    "Apartado",
-    "Bello",
-    "Buritica",
-    "Caldas",
-    "Cisneros",
-    "Copacabana",
-    "El Bagre",
-    "Envigado",
-    "Girardota",
-    "Guarne",
-    "Itagui",
-    "La Estrella",
-    "La Union",
-    "Medellin",
-    "Remedios",
-    "Rionegro",
-    "Sabaneta",
-    "San Pedro De Los Milagros",
-    "Santa Barbara",
-    "Santafe De Antioquia",
-    "Segovia",
-    "Buenaventura",
-    "Cali",
-    "Cartago",
-    "Dagua",
-    "Jamundi",
-    "Palmira",
-    "Yumbo",
+    "Amaga", "Apartado", "Bello", "Buritica", "Caldas", "Cisneros",
+    "Copacabana", "El Bagre", "Envigado", "Girardota", "Guarne",
+    "Itagui", "La Estrella", "La Union", "Medellin", "Remedios",
+    "Rionegro", "Sabaneta", "San Pedro De Los Milagros", "Santa Barbara",
+    "Santafe De Antioquia", "Segovia", "Buenaventura", "Cali", "Cartago",
+    "Dagua", "Jamundi", "Palmira", "Yumbo",
 ]
- 
+
 GRUPO_C_JINETH = [
-    "Aguazul",
-    "Anapoima",
-    "Bogota, D.C.",
-    "Cajica",
-    "Chia",
-    "Cota",
-    "Cucuta",
-    "Facatativa",
-    "Funza",
-    "Fusagasuga",
-    "Gachancipa",
-    "Granada",
-    "La Calera",
-    "Los Patios",
-    "Madrid",
-    "Mitu",
-    "Mosquera",
-    "Riohacha",
-    "Sibate",
-    "Siberia",
-    "Soacha",
-    "Sopo",
-    "Tenjo",
-    "Tocancipa",
-    "Usaquen",
-    "Villanueva",
-    "Villapinzon",
-    "Villeta",
-    "Zipaquira",
+    "Aguazul", "Anapoima", "Bogota, D.C.", "Cajica", "Chia", "Cota",
+    "Cucuta", "Facatativa", "Funza", "Fusagasuga", "Gachancipa", "Granada",
+    "La Calera", "Los Patios", "Madrid", "Mitu", "Mosquera", "Riohacha",
+    "Sibate", "Siberia", "Soacha", "Sopo", "Tenjo", "Tocancipa",
+    "Usaquen", "Villanueva", "Villapinzon", "Villeta", "Zipaquira",
 ]
- 
+
 GRUPO_D_LIZETH = [
-    "El Carmen de Atrato",
-    "Popayan",
-    "Villa Rica",
-    "Barrancabermeja",
-    "Bucaramanga",
-    "Floridablanca",
-    "Giron",
-    "Los Santos",
-    "Piedecuesta",
-    "Duitama",
-    "Sogamoso",
-    "Tunja",
-    "Ibague",
-    "Neiva",
-    "Palermo",
-    "Santa Maria",
-    "Quibdo",
-    "Pasto",
-    "Ipiales",
-    "Tumaco",
-    "La Union Narino",
-    "Samaniego",
-    "Tuquerres",
+    "El Carmen de Atrato", "Popayan", "Villa Rica", "Barrancabermeja",
+    "Bucaramanga", "Floridablanca", "Giron", "Los Santos", "Piedecuesta",
+    "Duitama", "Sogamoso", "Tunja", "Ibague", "Neiva", "Palermo",
+    "Santa Maria", "Quibdo", "Pasto", "Ipiales", "Tumaco",
+    "La Union Narino", "Samaniego", "Tuquerres",
 ]
 
 TODAS_LAS_CIUDADES = sorted(GRUPO_A_NEISY + GRUPO_B_CAMILA + GRUPO_C_JINETH + GRUPO_D_LIZETH)
@@ -202,7 +111,7 @@ CORREOS_ASESORAS = {
     "Neisy Bolanos":  "arelis.bolanos@adecco.com",
     "Camila Londono": "maria.londono@adecco.com",
     "Jineth Cortes":  "jineth.cortes@adecco.com",
-    "Lizeth Garzon":  "Lizeth.GarzonZ@adecco.com", 
+    "Lizeth Garzon":  "Lizeth.GarzonZ@adecco.com",
 }
 
 CC_FIJOS = ["manuel.pimentelA@adecco.com", "ingrid.bautista@adecco.com"]
@@ -228,7 +137,7 @@ CIUDADES_PRINCIPALES = [
     "Bogota, D.C.", "Medellin", "Cali", "Barranquilla",
     "Cartagena", "Bucaramanga", "Itagui"
 ]
- 
+
 CIUDADES_INTERMEDIAS = [
     "Villavicencio", "Neiva", "Ibague", "Pereira",
     "Manizales", "Armenia", "Cucuta",
@@ -270,6 +179,8 @@ def obtener_asesora_y_clasificacion(ciudad: str):
         asesora = "Jineth Cortes"
     elif ciudad in GRUPO_D_LIZETH:
         asesora = "Lizeth Garzon"
+    else:
+        asesora = "Jineth Cortes"
 
     if ciudad in CIUDADES_PRINCIPALES:
         clasificacion = "PRINCIPAL"
@@ -316,18 +227,15 @@ def get_master_cell(ws, cell_ref: str):
     Compatible con todas las versiones de openpyxl.
     """
     cell = ws[cell_ref]
-    # Si no es MergedCell, retornar directo
     from openpyxl.cell.cell import MergedCell
     if not isinstance(cell, MergedCell):
         return cell
 
-    # Buscar a qué rango fusionado pertenece
     for merged_range in ws.merged_cells.ranges:
         min_col = merged_range.min_col
         min_row = merged_range.min_row
         max_col = merged_range.max_col
         max_row = merged_range.max_row
-        # Obtener fila y columna de la celda actual
         target_row = cell.row
         target_col = cell.column
         if (min_row <= target_row <= max_row and
@@ -419,8 +327,8 @@ def diligenciar_formato_excel(datos: dict, plantilla_bytes: bytes, logo_bytes: b
     elif row.get("Q23") == "75 HORAS":
         sc(ws, "L37", "X")
 
-    sc(ws, "Z37", row.get("Q24", ""))   # Num vacantes
-    sc(ws, "O39", row.get("Q25", ""))   # Ciudad
+    sc(ws, "Z37", row.get("Q24", ""))
+    sc(ws, "O39", row.get("Q25", ""))
 
     dias_raw = str(row.get("Q26", ""))
     dias_seleccionados = [d.strip().upper() for d in dias_raw.split(";") if d.strip()]
@@ -434,11 +342,11 @@ def diligenciar_formato_excel(datos: dict, plantilla_bytes: bytes, logo_bytes: b
     if row.get("Q22") == "INTERDISCIPLINARIO":
         agr_data = row.get("agr_data", [])
         celdas_agr = [
-            ("J49", "AG49"),  # AGR 1 del form → AGR LÍDER en Excel
-            ("J51", "AG51"),  # AGR 2 del form → AGR 1 en Excel
-            ("J53", "AG53"),  # AGR 3 del form → AGR 2 en Excel
-            ("J55", "AG55"),  # AGR 4 del form → AGR 3 en Excel
-            ("J57", "AG57"),  # AGR 5 del form → AGR 4 en Excel
+            ("J49", "AG49"),
+            ("J51", "AG51"),
+            ("J53", "AG53"),
+            ("J55", "AG55"),
+            ("J57", "AG57"),
         ]
         for idx, agr in enumerate(agr_data):
             if idx < len(celdas_agr):
@@ -446,7 +354,7 @@ def diligenciar_formato_excel(datos: dict, plantilla_bytes: bytes, logo_bytes: b
                 sc(ws, celda_nombre, agr.get("agr", ""))
                 sc(ws, celda_horas,  agr.get("horas", 0))
 
-    sc(ws, "G43", row.get("Q27", ""))   # Horario
+    sc(ws, "G43", row.get("Q27", ""))
 
     opciones_riesgo = {1: "H45", 2: "K45", 3: "N45", 4: "Q45", 5: "T45"}
     try:
@@ -456,7 +364,7 @@ def diligenciar_formato_excel(datos: dict, plantilla_bytes: bytes, logo_bytes: b
     except Exception:
         pass
 
-    sc(ws, "AA45", row.get("Q29", ""))   # Sector económico
+    sc(ws, "AA45", row.get("Q29", ""))
 
     if row.get("Q30") == "MOTO":
         sc(ws, "R59", "X")
@@ -510,14 +418,13 @@ def diligenciar_formato_excel(datos: dict, plantilla_bytes: bytes, logo_bytes: b
         "Q89": "AG114","Q90": "AG116",
         "Q70": "AG80",
         "Q86": "AG110",
-        "Q92":"AG118"
+        "Q92": "AG118"
     }
     fill_si_no_block(extras_map, 3)
 
     # ── VI. Recomendaciones ────────────────────────────────────────────────
     get_master_cell(ws, "A122").value = row.get("Q91", "")
     get_master_cell(ws, "Z119").value = row.get("Q93", "")
-    
 
     # ── Logo ───────────────────────────────────────────────────────────────
     if logo_bytes:
@@ -586,7 +493,6 @@ def enviar_correo(datos: dict, xlsx_bytes: bytes, archivos_hv: list[dict]) -> bo
     msg["Subject"] = f"ID {id_sol} - NUEVA SOLICITUD DE OUTSOURCING: {perfil} en {ciudad}"
     msg.attach(MIMEText(cuerpo, "html"))
 
-    # ── Adjunto 1: Excel diligenciado ─────────────────────────────────────
     parte_xlsx = MIMEBase("application", "octet-stream")
     parte_xlsx.set_payload(xlsx_bytes)
     encoders.encode_base64(parte_xlsx)
@@ -596,8 +502,6 @@ def enviar_correo(datos: dict, xlsx_bytes: bytes, archivos_hv: list[dict]) -> bo
     )
     msg.attach(parte_xlsx)
 
-    # ── Adjunto 2: PDF hoja de vida (opcional) ────────────────────────────
-    # Adjuntos: PDFs hojas de vida (uno o varios)
     for archivo in archivos_hv:
         parte_hv = MIMEBase("application", "octet-stream")
         parte_hv.set_payload(archivo["bytes"])
@@ -620,24 +524,48 @@ def enviar_correo(datos: dict, xlsx_bytes: bytes, archivos_hv: list[dict]) -> bo
         return False
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# 8. GENERAR ARCHIVO PLANO — TODOS LOS CAMPOS (incluyendo ocultos/condicionales)
+# ─────────────────────────────────────────────────────────────────────────────
+
 def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
     id_sol   = str(datos.get("id_solicitud", "N/A"))
     agr_data = datos.get("agr_data", [])
 
-    # ── Construir AGR dinámico ─────────────────────────────────────────────
+    # ── AGR: siempre 5 slots fijos (vacíos si no aplica) ──────────────────
+    # Garantiza estructura uniforme independientemente de si es FIJO o INTERDISCIPLINARIO
     agr_cols = {}
-    if agr_data:
-        for i, agr in enumerate(agr_data, start=1):
-            agr_cols[f"AGR_{i}_NOMBRE"]          = agr.get("agr",   "")
-            agr_cols[f"AGR_{i}_HORAS_MENSUALES"] = agr.get("horas", "")
-    else:
-        agr_cols["SIN_DETALLE_AGR"] = "SI"
+    for i in range(1, 6):
+        agr = agr_data[i - 1] if i <= len(agr_data) else {}
+        agr_cols[f"AGR_{i}_NOMBRE"]          = agr.get("agr",   "")
+        agr_cols[f"AGR_{i}_HORAS_MENSUALES"] = agr.get("horas", "")
 
-    # ── Definir columnas fijas ─────────────────────────────────────────────
+    # ── Campos calculados ─────────────────────────────────────────────────
+    ciudad = str(datos.get("Q25", "")).strip()
+    try:
+        asesora_asignada, clasificacion_ciudad, dias_respuesta = obtener_asesora_y_clasificacion(ciudad)
+        fecha_entrega_estimada = calcular_fecha_entrega(dias_respuesta)
+    except Exception:
+        asesora_asignada        = ""
+        clasificacion_ciudad    = ""
+        dias_respuesta          = ""
+        fecha_entrega_estimada  = ""
+
+    # ── Columnas del archivo plano ─────────────────────────────────────────
+    # TODOS los campos del formulario aparecen aquí, incluyendo los condicionales/ocultos.
+    # Los campos que no aplican en un registro llevarán cadena vacía o 0.
     columnas = {
+        # ── Metadatos de la solicitud ──────────────────────────────────────
         "ID_SOLICITUD":                        id_sol,
         "FECHA":                               datos.get("Q2",  ""),
+        "ASESORA_ASIGNADA":                    asesora_asignada,
+        "CLASIFICACION_CIUDAD":                clasificacion_ciudad,
+        "DIAS_HABILES_RESPUESTA":              dias_respuesta,
+        "FECHA_ENTREGA_ESTIMADA":              fecha_entrega_estimada,
+
+        # ── I. Información general ─────────────────────────────────────────
         "TIPO_SOLICITUD":                      datos.get("Q6",  ""),
+        # Condicional: solo se llena si Q6 == "REEMPLAZO", pero siempre aparece en el plano
         "TRABAJADOR_REEMPLAZAR":               datos.get("Q7",  ""),
         "RAZON_SOCIAL_EMPRESA":                datos.get("Q8",  ""),
         "NIT_EMPRESA":                         datos.get("Q9",  ""),
@@ -646,10 +574,16 @@ def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
         "CELULAR_AGR":                         datos.get("Q12", ""),
         "DIRECCION_SECTORIAL":                 datos.get("Q13", ""),
         "DIRECTOR_SECTORIAL":                  datos.get("Q14", ""),
+
+        # ── II. Cargo ──────────────────────────────────────────────────────
+        # Q15 ya contiene la concatenación completa incluyendo sub-selectores ocultos
+        # (profesional_sst / profesional_sst_ae / otro_profesional / ingeniero_especialista / otro_ingeniero)
         "PERFIL":                              datos.get("Q15", ""),
         "EXPERIENCIA_REQUERIDA":               datos.get("Q20", ""),
         "SALARIO_FUERA_TABLA":                 datos.get("Q21", ""),
         "TIPO_ASIGNACION":                     datos.get("Q22", ""),
+        # AGR slots fijos 1-5 (vacíos si Q22 == "FIJO")
+        **agr_cols,
         "TIEMPO_SERVICIO":                     datos.get("Q23", ""),
         "NUMERO_VACANTES":                     datos.get("Q24", ""),
         "CIUDAD_SERVICIO":                     datos.get("Q25", ""),
@@ -658,24 +592,37 @@ def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
         "CLASE_RIESGO":                        datos.get("Q28", ""),
         "SECTOR_ECONOMICO":                    datos.get("Q29", ""),
         "TRANSPORTE_PROPIO":                   datos.get("Q30", ""),
+        # Condicional: solo se llena si Q30 != "NINGUNO", pero siempre aparece en el plano
         "AUXILIO_TRANSPORTE_PROPIO":           datos.get("Q31", ""),
-        **agr_cols,
+
+        # ── III. Auxilios Autorizados ──────────────────────────────────────
         "TRANSPORTE_URBANO":                   datos.get("Q32", ""),
+        # Condicionales de Q32: solo se llenan si Q32 == "SI"
         "FRECUENCIA_TRANSPORTE_URBANO":        datos.get("Q33", ""),
         "VALOR_TRANSPORTE_URBANO":             datos.get("Q34", ""),
+
         "TRANSPORTE_INTERMUNICIPAL":           datos.get("Q35", ""),
-        "FRECUENCIA_TRANSPORTE_INTERMUNICIPAL":datos.get("Q36", ""),
+        # Condicionales de Q35: solo se llenan si Q35 == "SI"
+        "FRECUENCIA_TRANSPORTE_INTERMUNICIPAL": datos.get("Q36", ""),
         "VALOR_TRANSPORTE_INTERMUNICIPAL":     datos.get("Q37", ""),
+
         "COMUNICACION":                        datos.get("Q38", ""),
+        # Condicionales de Q38: solo se llenan si Q38 == "SI"
         "FRECUENCIA_COMUNICACION":             datos.get("Q39", ""),
         "VALOR_COMUNICACION":                  datos.get("Q40", ""),
+
         "OTRO_AUXILIO":                        datos.get("Q41", ""),
+        # Condicionales de Q41: solo se llenan si Q41 == "SI"
         "OTRO_AUXILIO_CUAL":                   datos.get("Q42_texto", ""),
         "OTRO_AUXILIO_FRECUENCIA":             datos.get("Q43_frec",  ""),
         "OTRO_AUXILIO_VALOR":                  datos.get("Q44_valor", ""),
+
+        # ── IV. Competencias Técnicas ──────────────────────────────────────
         "PRUEBA_TECNICA_PROFESION_BASE":       datos.get("Q56", ""),
         "PRUEBA_OFIMATICA":                    datos.get("Q57", ""),
         "PRUEBA_TECNICA_SIG":                  datos.get("Q58", ""),
+
+        # ── IV. Competencias Blandas ───────────────────────────────────────
         "ORIENTACION_RESULTADOS":              datos.get("Q59", ""),
         "ORIENTACION_CLIENTE":                 datos.get("Q60", ""),
         "ANALISIS_SOLUCION_PROBLEMAS":         datos.get("Q61", ""),
@@ -687,7 +634,10 @@ def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
         "LIDERAR_EQUIPOS":                     datos.get("Q67", ""),
         "PLANIFICACION_ESTRATEGICA":           datos.get("Q68", ""),
         "OTRA_COMPETENCIA":                    datos.get("Q70", ""),
+        # Condicional: solo se llena si Q70 == "SI"
         "DESCRIPCION_OTRA_COMPETENCIA":        datos.get("Q71_extra", ""),
+
+        # ── V. EPPs ────────────────────────────────────────────────────────
         "EPP_CASCO_DIELECTRICO":               datos.get("Q72", ""),
         "EPP_CASCO_BARBUQUEJO":                datos.get("Q73", ""),
         "EPP_PROTECTOR_AUDITIVO_COPA":         datos.get("Q74", ""),
@@ -695,6 +645,8 @@ def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
         "EPP_MONOGAFA":                        datos.get("Q76", ""),
         "EPP_PROTECCION_RESPIRATORIA":         datos.get("Q77", ""),
         "EPP_PROTECCION_VISUAL":               datos.get("Q78", ""),
+
+        # ── V. Dotación ────────────────────────────────────────────────────
         "DOTACION_UNIFORME_ANTIFLUIDO":        datos.get("Q79", ""),
         "DOTACION_CHAQUETA":                   datos.get("Q80", ""),
         "DOTACION_CAMISA":                     datos.get("Q81", ""),
@@ -702,13 +654,23 @@ def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
         "DOTACION_BOTAS_ANTIDESLIZANTE":       datos.get("Q83", ""),
         "DOTACION_BOTAS_ANTIPERFORANTE":       datos.get("Q84", ""),
         "OTRA_DOTACION":                       datos.get("Q86", ""),
+        # Condicional: solo se llena si Q86 == "SI"
         "DESCRIPCION_OTRA_DOTACION":           datos.get("Q86_texto", ""),
+
+        # ── V. Equipo de cómputo ───────────────────────────────────────────
         "EQUIPO_COMPUTO_BASICO":               datos.get("Q87", ""),
         "EQUIPO_COMPUTO_MAYOR_CAPACIDAD":      datos.get("Q88", ""),
+
+        # ── V. Cursos especiales ───────────────────────────────────────────
         "CURSO_ALTURAS":                       datos.get("Q89", ""),
         "CURSO_ESPACIOS_CONFINADOS":           datos.get("Q90", ""),
+
+        # ── VI. Exámenes especializados ────────────────────────────────────
         "REQUIERE_EXAMENES_INGRESO":           datos.get("Q92", ""),
+        # Condicional: solo se llena si Q92 == "SI"
         "EXAMENES_CUALES":                     datos.get("Q93", ""),
+
+        # ── VII. Recomendaciones ───────────────────────────────────────────
         "RECOMENDACIONES_GENERALES":           datos.get("Q91", ""),
     }
 
@@ -729,30 +691,23 @@ def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
                              wrap_text=True, text_rotation=90)
     align_valor  = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
-    # Fila 1 → headers | Fila 2 → valores
-    for col_idx, (header, valor) in enumerate(columnas.items(), start=1):
-        # Header
-        ch = ws.cell(row=1, column=col_idx, value=header)
+    for col_num, (header, valor) in enumerate(columnas.items(), start=1):
+        ch = ws.cell(row=1, column=col_num, value=header)
         ch.font      = font_header
         ch.fill      = fill_header
         ch.alignment = align_header
         ch.border    = borde
 
-        # Valor
-        cv = ws.cell(row=2, column=col_idx, value=str(valor) if valor is not None else "")
+        cv = ws.cell(row=2, column=col_num, value=str(valor) if valor is not None else "")
         cv.font      = font_valor
         cv.fill      = fill_valor
         cv.alignment = align_valor
         cv.border    = borde
 
-        # Ancho de columna
-        ws.column_dimensions[get_column_letter(col_idx)].width = 18
+        ws.column_dimensions[get_column_letter(col_num)].width = 18
 
-    # Alto de filas
-    ws.row_dimensions[1].height = 80   # headers rotados 90°
+    ws.row_dimensions[1].height = 80
     ws.row_dimensions[2].height = 25
-
-    # Freeze header row
     ws.freeze_panes = "A2"
 
     output = io.BytesIO()
@@ -762,6 +717,10 @@ def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
     nombre_archivo = f"{id_sol}_Solicitud plano.xlsx"
     return nombre_archivo, output.read()
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 9. ENVÍO ARCHIVO PLANO
+# ─────────────────────────────────────────────────────────────────────────────
 
 def enviar_archivo_plano(datos: dict) -> bool:
     nombre_archivo, excel_bytes = generar_excel_plano(datos)
@@ -779,7 +738,6 @@ def enviar_archivo_plano(datos: dict) -> bool:
     )
     msg.attach(MIMEText(cuerpo, "plain", "utf-8"))
 
-    # Adjunto Excel
     parte_xlsx = MIMEBase("application", "octet-stream")
     parte_xlsx.set_payload(excel_bytes)
     encoders.encode_base64(parte_xlsx)
@@ -801,7 +759,7 @@ def enviar_archivo_plano(datos: dict) -> bool:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 8. INTERFAZ STREAMLIT
+# 10. INTERFAZ STREAMLIT
 # ─────────────────────────────────────────────────────────────────────────────
 
 def main():
@@ -1137,7 +1095,7 @@ def main():
     with c1: Q89 = st.selectbox("Curso trabajo seguro en alturas", ["NO", "SI"])
     with c2: Q90 = st.selectbox("Curso espacios confinados", ["NO", "SI"])
 
-    # ── VI. Recomendaciones ────────────────────────────────────────────────
+    # ── VI. Exámenes especializados ────────────────────────────────────────
     st.markdown('<div class="section-header">VI. EXAMANES ESPECIALIZADOS</div>',
                 unsafe_allow_html=True)
     c1, c2 = st.columns(2)
@@ -1159,7 +1117,7 @@ def main():
     hv_pdfs = st.file_uploader(
         "Adjuntar archivos(PDF)",
         type=["pdf"],
-        accept_multiple_files=True,          # ← clave del cambio
+        accept_multiple_files=True,
         help="Puedes adjuntar uno o varios archivos PDF. Tamaño máximo por archivo: 200 MB.",
         key="hoja_de_vida"
     )
@@ -1173,7 +1131,7 @@ def main():
     enviar = st.button("📤 Enviar Solicitud", use_container_width=True, type="primary")
 
     # ─────────────────────────────────────────────────────────────────────────
-    # 9. PROCESAMIENTO AL ENVIAR
+    # 11. PROCESAMIENTO AL ENVIAR
     # ─────────────────────────────────────────────────────────────────────────
     if enviar:
         errores = []
@@ -1182,7 +1140,6 @@ def main():
         if not Q11.strip():  errores.append("Correo del AGR es obligatorio.")
         if not Q25:          errores.append("Debe seleccionar una ciudad.")
         if not Q26:          errores.append("Debe seleccionar al menos un dia de servicio.")
-        # if hv_pdf is None:   errores.append("Debe adjuntar el PDF de la hoja de vida.")
 
         if errores:
             for e in errores:
@@ -1245,9 +1202,8 @@ def main():
                     f.seek(0)
                     archivos_hv.append({"bytes": f.read(), "nombre": f.name})
 
-            exito = enviar_correo(datos, xlsx_bytes, archivos_hv)
+            exito       = enviar_correo(datos, xlsx_bytes, archivos_hv)
             exito_plano = enviar_archivo_plano(datos)
-            # exito = True
 
         asesora, clasificacion_info, dias_info = obtener_asesora_y_clasificacion(Q25)
         fecha_entrega = calcular_fecha_entrega(dias_info)
