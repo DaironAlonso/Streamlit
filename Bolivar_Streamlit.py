@@ -192,7 +192,7 @@ def obtener_asesora_y_clasificacion(ciudad: str):
     return asesora, clasificacion, TIEMPOS_RESPUESTA[clasificacion]
 
 
-def calcular_fecha_entrega(dias_habiles: int) -> str:
+def calcular_fecha_entrega(dias_habiles: int, dias_extra: int = 0) -> str:
     hoy = datetime.date.today()
     festivos = holidays.country_holidays("CO", years=[hoy.year, hoy.year + 1])
 
@@ -201,12 +201,15 @@ def calcular_fecha_entrega(dias_habiles: int) -> str:
         while hoy.weekday() >= 5 or hoy in festivos:
             hoy += datetime.timedelta(days=1)
 
+    # Sumar días extra al total de días hábiles
+    total_dias = dias_habiles + dias_extra
+
     contador = 0
     fecha = hoy
-    while contador < dias_habiles:
+    while contador < total_dias:
         if fecha.weekday() < 5 and fecha not in festivos:
             contador += 1
-            if contador == dias_habiles:
+            if contador == total_dias:
                 break
         fecha += datetime.timedelta(days=1)
 
@@ -449,8 +452,10 @@ def diligenciar_formato_excel(datos: dict, plantilla_bytes: bytes, logo_bytes: b
 
 def enviar_correo(datos: dict, xlsx_bytes: bytes, archivos_hv: list[dict]) -> bool:
     ciudad = str(datos.get("Q25", "")).strip()
+    perfil = str(datos.get("Q15", "")).strip()
+    dias_extra_medico = 2 if "MÉDICO" in perfil.upper() else 0
     asesora, clasificacion, dias_hab = obtener_asesora_y_clasificacion(ciudad)
-    fecha_entrega = calcular_fecha_entrega(dias_hab)
+    fecha_entrega = calcular_fecha_entrega(dias_hab, dias_extra=dias_extra_medico)
 
     correo_agr  = datos.get("Q11", "")
     id_sol      = datos.get("id_solicitud", "N/A")
@@ -542,9 +547,12 @@ def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
 
     # ── Campos calculados ─────────────────────────────────────────────────
     ciudad = str(datos.get("Q25", "")).strip()
+    perfil = str(datos.get("Q15", "")).strip()
+    dias_extra_medico = 2 if "MÉDICO" in perfil.upper() else 0
+
     try:
         asesora_asignada, clasificacion_ciudad, dias_respuesta = obtener_asesora_y_clasificacion(ciudad)
-        fecha_entrega_estimada = calcular_fecha_entrega(dias_respuesta)
+        fecha_entrega_estimada = calcular_fecha_entrega(dias_respuesta, dias_extra=dias_extra_medico)
     except Exception:
         asesora_asignada        = ""
         clasificacion_ciudad    = ""
@@ -1206,7 +1214,8 @@ def main():
             exito_plano = enviar_archivo_plano(datos)
 
         asesora, clasificacion_info, dias_info = obtener_asesora_y_clasificacion(Q25)
-        fecha_entrega = calcular_fecha_entrega(dias_info)
+        dias_extra_medico = 2 if "MÉDICO" in Q15.upper() else 0
+        fecha_entrega = calcular_fecha_entrega(dias_info, dias_extra=dias_extra_medico)
         nombre_base   = f"{id_sol} - {Q15} en {Q25}"
 
         if exito and exito_plano:
