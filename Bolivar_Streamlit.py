@@ -108,30 +108,18 @@ TODAS_LAS_CIUDADES = sorted(GRUPO_A_NEISY + GRUPO_B_CAMILA + GRUPO_C_JINETH + GR
 DIAS_SEMANA = ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO", "FESTIVOS"]
 
 CORREOS_ASESORAS = {
-    "Neisy Bolanos":  "arelis.bolanos@adecco.com",
-    "Camila Londono": "maria.londono@adecco.com",
-    "Jineth Cortes":  "jineth.cortes@adecco.com",
-    "Lizeth Garzon":  "Lizeth.GarzonZ@adecco.com",
+    "Neisy Bolanos":  "desarrolladorbi7@gmail.com",
+    "Camila Londono": "desarrolladorbi7@gmail.com",
+    "Jineth Cortes":  "desarrolladorbi7@gmail.com",
+    "Lizeth Garzon":  "desarrolladorbi7@gmail.com",
 }
 
-CC_FIJOS = ["manuel.pimentelA@adecco.com", "ingrid.bautista@adecco.com"]
+CC_FIJOS = ["desarrolladorbi7@gmail.com"]
+
 DESTINATARIOS_ARCHIVO_PLANO = [
-    "MichaelE.Brochero@adecco.com",
+    # "MichaelE.Brochero@adecco.com",
     "manuel.pimentelA@adecco.com",
 ]
-
-# DESTINATARIOS_ARCHIVO_PLANO = [
-#     "dairon.alonsoh@adecco.com",
-# ]
-
-# CORREOS_ASESORAS = {
-#     "Neisy Bolanos":  "desarrolladorbi7@gmail.com",
-#     "Camila Londono": "desarrolladorbi7@gmail.com",
-#     "Jineth Cortes":  "desarrolladorbi7@gmail.com",
-#     "Lizeth Garzon":  "desarrolladorbi7@gmail.com",
-# }
-
-# CC_FIJOS = ["desarrolladorbi7@gmail.com"]
 
 CIUDADES_PRINCIPALES = [
     "Bogota, D.C.", "Medellin", "Cali", "Barranquilla",
@@ -145,6 +133,19 @@ CIUDADES_INTERMEDIAS = [
 ]
 
 TIEMPOS_RESPUESTA = {"PRINCIPAL": 5, "INTERMEDIA": 7, "ALEJADA": 9}
+
+ANIOS_EXPERIENCIA = [
+    "MAYOR 10 AÑOS",
+    "> 5 - 9 AÑOS",
+    "> 2 - 5 AÑOS",
+    "MENOS DE 2 AÑOS",
+]
+
+CONDICION_SALARIO = [
+    "Salario negociable según tabla (Salario vs Experiencia)",
+    "Salario basado únicamente en la experiencia registrada",
+    "Otro Salario (indique cuál)",
+]
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -201,7 +202,6 @@ def calcular_fecha_entrega(dias_habiles: int, dias_extra: int = 0) -> str:
         while hoy.weekday() >= 5 or hoy in festivos:
             hoy += datetime.timedelta(days=1)
 
-    # Sumar días extra al total de días hábiles
     total_dias = dias_habiles + dias_extra
 
     contador = 0
@@ -225,10 +225,6 @@ def generar_id_solicitud() -> str:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def get_master_cell(ws, cell_ref: str):
-    """
-    Retorna la celda maestra (top-left) de un rango fusionado.
-    Compatible con todas las versiones de openpyxl.
-    """
     cell = ws[cell_ref]
     from openpyxl.cell.cell import MergedCell
     if not isinstance(cell, MergedCell):
@@ -318,6 +314,8 @@ def diligenciar_formato_excel(datos: dict, plantilla_bytes: bytes, logo_bytes: b
     # ── II. Cargo ──────────────────────────────────────────────────────────
     sc(ws, "G23", row.get("Q15", ""))
     sc(ws, "Q29", row.get("Q20", ""))
+    sc(ws, "E33", row.get("Q_anios_exp", ""))
+    sc(ws, "Q33", row.get("Q_cond_salario", ""))
     sc(ws, "G35", row.get("Q21", 0))
 
     if row.get("Q22") == "FIJO":
@@ -370,9 +368,9 @@ def diligenciar_formato_excel(datos: dict, plantilla_bytes: bytes, logo_bytes: b
     sc(ws, "AA45", row.get("Q29", ""))
 
     if row.get("Q30") == "MOTO":
-        sc(ws, "R59", "X")
+        sc(ws, "O59", "MOTO")
     elif row.get("Q30") == "VEHICULO":
-        sc(ws, "W59", "X")
+        sc(ws, "O59", "CARRO")
     sc(ws, "AC59", row.get("Q31", ""))
 
     # ── III. Auxilios ──────────────────────────────────────────────────────
@@ -530,22 +528,19 @@ def enviar_correo(datos: dict, xlsx_bytes: bytes, archivos_hv: list[dict]) -> bo
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 8. GENERAR ARCHIVO PLANO — TODOS LOS CAMPOS (incluyendo ocultos/condicionales)
+# 8. GENERAR ARCHIVO PLANO
 # ─────────────────────────────────────────────────────────────────────────────
 
 def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
     id_sol   = str(datos.get("id_solicitud", "N/A"))
     agr_data = datos.get("agr_data", [])
 
-    # ── AGR: siempre 5 slots fijos (vacíos si no aplica) ──────────────────
-    # Garantiza estructura uniforme independientemente de si es FIJO o INTERDISCIPLINARIO
     agr_cols = {}
     for i in range(1, 6):
         agr = agr_data[i - 1] if i <= len(agr_data) else {}
         agr_cols[f"AGR_{i}_NOMBRE"]          = agr.get("agr",   "")
         agr_cols[f"AGR_{i}_HORAS_MENSUALES"] = agr.get("horas", "")
 
-    # ── Campos calculados ─────────────────────────────────────────────────
     ciudad = str(datos.get("Q25", "")).strip()
     perfil = str(datos.get("Q15", "")).strip()
     dias_extra_medico = 2 if "MÉDICO" in perfil.upper() else 0
@@ -559,21 +554,14 @@ def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
         dias_respuesta          = ""
         fecha_entrega_estimada  = ""
 
-    # ── Columnas del archivo plano ─────────────────────────────────────────
-    # TODOS los campos del formulario aparecen aquí, incluyendo los condicionales/ocultos.
-    # Los campos que no aplican en un registro llevarán cadena vacía o 0.
     columnas = {
-        # ── Metadatos de la solicitud ──────────────────────────────────────
         "ID_SOLICITUD":                        id_sol,
         "FECHA":                               datos.get("Q2",  ""),
         "ASESORA_ASIGNADA":                    asesora_asignada,
         "CLASIFICACION_CIUDAD":                clasificacion_ciudad,
         "DIAS_HABILES_RESPUESTA":              dias_respuesta,
         "FECHA_ENTREGA_ESTIMADA":              fecha_entrega_estimada,
-
-        # ── I. Información general ─────────────────────────────────────────
         "TIPO_SOLICITUD":                      datos.get("Q6",  ""),
-        # Condicional: solo se llena si Q6 == "REEMPLAZO", pero siempre aparece en el plano
         "TRABAJADOR_REEMPLAZAR":               datos.get("Q7",  ""),
         "RAZON_SOCIAL_EMPRESA":                datos.get("Q8",  ""),
         "NIT_EMPRESA":                         datos.get("Q9",  ""),
@@ -582,15 +570,13 @@ def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
         "CELULAR_AGR":                         datos.get("Q12", ""),
         "DIRECCION_SECTORIAL":                 datos.get("Q13", ""),
         "DIRECTOR_SECTORIAL":                  datos.get("Q14", ""),
-
-        # ── II. Cargo ──────────────────────────────────────────────────────
-        # Q15 ya contiene la concatenación completa incluyendo sub-selectores ocultos
-        # (profesional_sst / profesional_sst_ae / otro_profesional / ingeniero_especialista / otro_ingeniero)
         "PERFIL":                              datos.get("Q15", ""),
         "EXPERIENCIA_REQUERIDA":               datos.get("Q20", ""),
+        "AÑOS_EXPERIENCIA":                    datos.get("Q_anios_exp", ""),
+        "CONDICION_SALARIO":                   datos.get("Q_cond_salario", ""),
+        "OTRO_SALARIO_DESCRIPCION":            datos.get("Q_otro_salario", ""),
         "SALARIO_FUERA_TABLA":                 datos.get("Q21", ""),
         "TIPO_ASIGNACION":                     datos.get("Q22", ""),
-        # AGR slots fijos 1-5 (vacíos si Q22 == "FIJO")
         **agr_cols,
         "TIEMPO_SERVICIO":                     datos.get("Q23", ""),
         "NUMERO_VACANTES":                     datos.get("Q24", ""),
@@ -600,37 +586,23 @@ def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
         "CLASE_RIESGO":                        datos.get("Q28", ""),
         "SECTOR_ECONOMICO":                    datos.get("Q29", ""),
         "TRANSPORTE_PROPIO":                   datos.get("Q30", ""),
-        # Condicional: solo se llena si Q30 != "NINGUNO", pero siempre aparece en el plano
         "AUXILIO_TRANSPORTE_PROPIO":           datos.get("Q31", ""),
-
-        # ── III. Auxilios Autorizados ──────────────────────────────────────
         "TRANSPORTE_URBANO":                   datos.get("Q32", ""),
-        # Condicionales de Q32: solo se llenan si Q32 == "SI"
         "FRECUENCIA_TRANSPORTE_URBANO":        datos.get("Q33", ""),
         "VALOR_TRANSPORTE_URBANO":             datos.get("Q34", ""),
-
         "TRANSPORTE_INTERMUNICIPAL":           datos.get("Q35", ""),
-        # Condicionales de Q35: solo se llenan si Q35 == "SI"
         "FRECUENCIA_TRANSPORTE_INTERMUNICIPAL": datos.get("Q36", ""),
         "VALOR_TRANSPORTE_INTERMUNICIPAL":     datos.get("Q37", ""),
-
         "COMUNICACION":                        datos.get("Q38", ""),
-        # Condicionales de Q38: solo se llenan si Q38 == "SI"
         "FRECUENCIA_COMUNICACION":             datos.get("Q39", ""),
         "VALOR_COMUNICACION":                  datos.get("Q40", ""),
-
         "OTRO_AUXILIO":                        datos.get("Q41", ""),
-        # Condicionales de Q41: solo se llenan si Q41 == "SI"
         "OTRO_AUXILIO_CUAL":                   datos.get("Q42_texto", ""),
         "OTRO_AUXILIO_FRECUENCIA":             datos.get("Q43_frec",  ""),
         "OTRO_AUXILIO_VALOR":                  datos.get("Q44_valor", ""),
-
-        # ── IV. Competencias Técnicas ──────────────────────────────────────
         "PRUEBA_TECNICA_PROFESION_BASE":       datos.get("Q56", ""),
         "PRUEBA_OFIMATICA":                    datos.get("Q57", ""),
         "PRUEBA_TECNICA_SIG":                  datos.get("Q58", ""),
-
-        # ── IV. Competencias Blandas ───────────────────────────────────────
         "ORIENTACION_RESULTADOS":              datos.get("Q59", ""),
         "ORIENTACION_CLIENTE":                 datos.get("Q60", ""),
         "ANALISIS_SOLUCION_PROBLEMAS":         datos.get("Q61", ""),
@@ -642,10 +614,7 @@ def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
         "LIDERAR_EQUIPOS":                     datos.get("Q67", ""),
         "PLANIFICACION_ESTRATEGICA":           datos.get("Q68", ""),
         "OTRA_COMPETENCIA":                    datos.get("Q70", ""),
-        # Condicional: solo se llena si Q70 == "SI"
         "DESCRIPCION_OTRA_COMPETENCIA":        datos.get("Q71_extra", ""),
-
-        # ── V. EPPs ────────────────────────────────────────────────────────
         "EPP_CASCO_DIELECTRICO":               datos.get("Q72", ""),
         "EPP_CASCO_BARBUQUEJO":                datos.get("Q73", ""),
         "EPP_PROTECTOR_AUDITIVO_COPA":         datos.get("Q74", ""),
@@ -653,8 +622,6 @@ def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
         "EPP_MONOGAFA":                        datos.get("Q76", ""),
         "EPP_PROTECCION_RESPIRATORIA":         datos.get("Q77", ""),
         "EPP_PROTECCION_VISUAL":               datos.get("Q78", ""),
-
-        # ── V. Dotación ────────────────────────────────────────────────────
         "DOTACION_UNIFORME_ANTIFLUIDO":        datos.get("Q79", ""),
         "DOTACION_CHAQUETA":                   datos.get("Q80", ""),
         "DOTACION_CAMISA":                     datos.get("Q81", ""),
@@ -662,27 +629,16 @@ def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
         "DOTACION_BOTAS_ANTIDESLIZANTE":       datos.get("Q83", ""),
         "DOTACION_BOTAS_ANTIPERFORANTE":       datos.get("Q84", ""),
         "OTRA_DOTACION":                       datos.get("Q86", ""),
-        # Condicional: solo se llena si Q86 == "SI"
         "DESCRIPCION_OTRA_DOTACION":           datos.get("Q86_texto", ""),
-
-        # ── V. Equipo de cómputo ───────────────────────────────────────────
         "EQUIPO_COMPUTO_BASICO":               datos.get("Q87", ""),
         "EQUIPO_COMPUTO_MAYOR_CAPACIDAD":      datos.get("Q88", ""),
-
-        # ── V. Cursos especiales ───────────────────────────────────────────
         "CURSO_ALTURAS":                       datos.get("Q89", ""),
         "CURSO_ESPACIOS_CONFINADOS":           datos.get("Q90", ""),
-
-        # ── VI. Exámenes especializados ────────────────────────────────────
         "REQUIERE_EXAMENES_INGRESO":           datos.get("Q92", ""),
-        # Condicional: solo se llena si Q92 == "SI"
         "EXAMENES_CUALES":                     datos.get("Q93", ""),
-
-        # ── VII. Recomendaciones ───────────────────────────────────────────
         "RECOMENDACIONES_GENERALES":           datos.get("Q91", ""),
     }
 
-    # ── Crear Excel ────────────────────────────────────────────────────────
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Solicitud"
@@ -732,18 +688,13 @@ def generar_excel_plano(datos: dict) -> tuple[str, bytes]:
 
 def enviar_archivo_plano(datos: dict) -> bool:
     nombre_archivo, excel_bytes = generar_excel_plano(datos)
-    id_sol = str(datos.get("id_solicitud", "N/A"))
-    ciudad = str(datos.get("Q25", "")).strip()
-    perfil = str(datos.get("Q15", "")).strip()
 
     msg = MIMEMultipart()
     msg["From"]    = EMAIL_USER
     msg["To"]      = "; ".join(DESTINATARIOS_ARCHIVO_PLANO)
     msg["Subject"] = f"Archivo plano solicitud outsourcing"
 
-    cuerpo = (
-        f"Se adjunta el resumen en Excel de la solicitud de outsourcing"
-    )
+    cuerpo = "Se adjunta el resumen en Excel de la solicitud de outsourcing"
     msg.attach(MIMEText(cuerpo, "plain", "utf-8"))
 
     parte_xlsx = MIMEBase("application", "octet-stream")
@@ -771,6 +722,10 @@ def enviar_archivo_plano(datos: dict) -> bool:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def main():
+    # ── CAMBIO 1: Control de estado del botón de envío ─────────────────────
+    if "enviando" not in st.session_state:
+        st.session_state.enviando = False
+
     st.markdown("""
     <style>
     .section-header {
@@ -835,7 +790,10 @@ def main():
     with c1:
         Q13 = st.text_input("Direccion Sectorial *")
     with c2:
+        # CAMBIO 2: Director Sectorial — la validación se hace al enviar
         Q14 = st.selectbox("Nombre Director Sectorial *", options=directores_sectoriales)
+        if Q14 == "Seleccionar Director Sectorial":
+            st.caption("⚠️ Debe seleccionar un Director Sectorial válido.")
 
     # ── II. Información del cargo ──────────────────────────────────────────
     st.markdown('<div class="section-header">II. INFORMACION GENERAL DEL CARGO</div>',
@@ -882,6 +840,28 @@ def main():
     with c2:
         if Q20 == "Otra":
             Q20 = st.text_input("Mencione experiencia diferente a lo anterior")
+
+    c1, c2 = st.columns(2)
+    with c1:
+        Q_anios_exp = st.selectbox(
+            "Años de Experiencia *",
+            ANIOS_EXPERIENCIA
+        )
+    with c2:
+        Q_cond_salario = st.selectbox(
+            "Condición del Salario *",
+            CONDICION_SALARIO
+        )
+
+    # CAMBIO 3: Campo "Otro Salario" obligatorio si se selecciona esa opción
+    Q_otro_salario = ""
+    if Q_cond_salario == "Otro Salario (indique cuál)":
+        Q_otro_salario = st.text_input(
+            "Indique la condición salarial *",
+            placeholder="Describa la condición salarial específica..."
+        )
+        if not Q_otro_salario.strip():
+            st.caption("⚠️ Este campo es obligatorio cuando selecciona 'Otro Salario'.")
 
     Q21_raw = st.text_input(
         "En caso de que el salario no esté en la tabla autorizada, indicar el valor (si está en tabla colocar 0)",
@@ -954,7 +934,7 @@ def main():
     c1, c2 = st.columns(2)
     with c1:
         Q30 = st.selectbox(
-            "Requiere algún tipo de transporte propio *",
+            "REQUIERE ALGÚN TIPO DE TRANSPORTE PROPIO (Tener en cuenta que el uso de Vehiculo genera un costo adicional por EPPs y Examenes Ocupacionales- Y otras responsabilidades para PGR)*",
             ["NINGUNO", "MOTO", "VEHICULO"]
         )
     with c2:
@@ -971,7 +951,7 @@ def main():
     with c1: Q32 = st.selectbox("Transporte Urbano", ["NO", "SI"])
     if Q32 == "SI":
         with c2: Q33 = st.selectbox("Frecuencia T. Urbano", ["", "QUINCENAL", "MENSUAL", "ANUAL"])
-        with c3: Q34 = st.number_input("Valor T. Urbano ($)", min_value=0, step=10000, value=0)
+        with c3: Q34 = st.selectbox("Valor T. Urbano ($)", ["","49.789","100.000"])
     else:
         Q33 = ""
         Q34 = 0
@@ -989,7 +969,7 @@ def main():
     with c1: Q38 = st.selectbox("Comunicacion", ["NO", "SI"])
     if Q38 == "SI":
         with c2: Q39 = st.selectbox("Frecuencia Comunicacion", ["", "QUINCENAL", "MENSUAL", "ANUAL"])
-        with c3: Q40 = st.number_input("Valor Comunicacion ($)", min_value=0, step=10000, value=0)
+        with c3: Q40 = st.selectbox("Valor Comunicacion ($)", ["","42.600"])
     else:
         Q39 = ""
         Q40 = 0
@@ -1135,8 +1115,13 @@ def main():
 
     st.divider()
 
-    # ── Botón de envío ────────────────────────────────────────────────────
-    enviar = st.button("📤 Enviar Solicitud", use_container_width=True, type="primary")
+    # ── CAMBIO 1: Botón bloqueado mientras se envía ────────────────────────
+    enviar = st.button(
+        "⏳ Enviando..." if st.session_state.enviando else "📤 Enviar Solicitud",
+        use_container_width=True,
+        type="primary",
+        disabled=st.session_state.enviando,
+    )
 
     # ─────────────────────────────────────────────────────────────────────────
     # 11. PROCESAMIENTO AL ENVIAR
@@ -1149,11 +1134,25 @@ def main():
         if not Q25:          errores.append("Debe seleccionar una ciudad.")
         if not Q26:          errores.append("Debe seleccionar al menos un dia de servicio.")
 
+        # CAMBIO 2: Validar Director Sectorial
+        if Q14 == "Seleccionar Director Sectorial":
+            errores.append("Debe seleccionar un Director Sectorial válido.")
+
+        # CAMBIO 3: Validar campo obligatorio de Otro Salario
+        if Q_cond_salario == "Otro Salario (indique cuál)" and not Q_otro_salario.strip():
+            errores.append("Debe indicar la condición salarial cuando selecciona 'Otro Salario (indique cuál)'.")
+
         if errores:
             for e in errores:
                 st.error(e)
             st.stop()
 
+        # Bloquear botón antes de procesar
+        st.session_state.enviando = True
+        st.rerun()
+
+    # Ejecutar el procesamiento cuando el flag está activo
+    if st.session_state.enviando:
         with st.spinner("Diligenciando formato Excel y enviando correo..."):
             id_sol    = generar_id_solicitud()
             fecha_hoy = datetime.date.today().strftime("%d/%m/%Y")
@@ -1171,7 +1170,6 @@ def main():
                 "Q26": "; ".join(Q26),
                 "Q27": Q27,   "Q28": Q28,   "Q29": Q29,
                 "Q30": Q30,   "Q31": Q31,
-                # Auxilios
                 "Q32": Q32,   "Q33": Q33,   "Q34": Q34,
                 "Q35": Q35,   "Q36": Q36,   "Q37": Q37,
                 "Q38": Q38,   "Q39": Q39,   "Q40": Q40,
@@ -1179,13 +1177,10 @@ def main():
                 "Q42_texto": Q42_texto,
                 "Q43_frec":  Q43_frec,
                 "Q44_valor": Q44_valor,
-                # Competencias
                 "Q56": Q56,   "Q57": Q57,   "Q58": Q58,
                 **comp_vals,
                 "Q70": Q70,   "Q71_extra": Q71_extra,
-                # EPPs
                 **epp_vals,
-                # Dotacion
                 **dot_vals,
                 "Q86": Q86,   "Q86_texto": Q86_texto,
                 "Q87": Q87,   "Q88": Q88,
@@ -1193,6 +1188,9 @@ def main():
                 "Q91": Q91,
                 "agr_data": agr_data if Q22 == "INTERDISCIPLINARIO" else [],
                 "Q92": Q92,   "Q93": Q93,
+                "Q_anios_exp":    Q_anios_exp,
+                "Q_cond_salario": Q_cond_salario if Q_cond_salario != "Otro Salario (indique cuál)" else Q_otro_salario,
+                "Q_otro_salario": Q_otro_salario,
             }
 
             logo_bytes_env = obtener_logo()
@@ -1200,6 +1198,7 @@ def main():
             plantilla_bytes = obtener_plantilla_excel()
             if plantilla_bytes is None:
                 st.error("No se pudo obtener la plantilla Excel. Verifica que FORMATO.xlsx esté en el directorio.")
+                st.session_state.enviando = False
                 st.stop()
 
             xlsx_bytes = diligenciar_formato_excel(datos, plantilla_bytes, logo_bytes_env)
@@ -1212,6 +1211,9 @@ def main():
 
             exito       = enviar_correo(datos, xlsx_bytes, archivos_hv)
             exito_plano = enviar_archivo_plano(datos)
+
+        # Desbloquear el botón al terminar
+        st.session_state.enviando = False
 
         asesora, clasificacion_info, dias_info = obtener_asesora_y_clasificacion(Q25)
         dias_extra_medico = 2 if "MÉDICO" in Q15.upper() else 0
