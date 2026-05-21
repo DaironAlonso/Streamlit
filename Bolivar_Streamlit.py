@@ -108,18 +108,30 @@ TODAS_LAS_CIUDADES = sorted(GRUPO_A_NEISY + GRUPO_B_CAMILA + GRUPO_C_JINETH + GR
 DIAS_SEMANA = ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "DOMINGO", "FESTIVOS"]
 
 CORREOS_ASESORAS = {
-    "Neisy Bolanos":  "desarrolladorbi7@gmail.com",
-    "Camila Londono": "desarrolladorbi7@gmail.com",
-    "Jineth Cortes":  "desarrolladorbi7@gmail.com",
-    "Lizeth Garzon":  "desarrolladorbi7@gmail.com",
+    "Neisy Bolanos":  "arelis.bolanos@adecco.com",
+    "Camila Londono": "maria.londono@adecco.com",
+    "Jineth Cortes":  "jineth.cortes@adecco.com",
+    "Lizeth Garzon":  "Lizeth.GarzonZ@adecco.com",
 }
 
-CC_FIJOS = ["desarrolladorbi7@gmail.com"]
-
+CC_FIJOS = ["manuel.pimentelA@adecco.com", "ingrid.bautista@adecco.com"]
 DESTINATARIOS_ARCHIVO_PLANO = [
-    # "MichaelE.Brochero@adecco.com",
+    "MichaelE.Brochero@adecco.com",
     "manuel.pimentelA@adecco.com",
 ]
+
+# DESTINATARIOS_ARCHIVO_PLANO = [
+#     "dairon.alonsoh@adecco.com",
+# ]
+
+# CORREOS_ASESORAS = {
+#     "Neisy Bolanos":  "desarrolladorbi7@gmail.com",
+#     "Camila Londono": "desarrolladorbi7@gmail.com",
+#     "Jineth Cortes":  "desarrolladorbi7@gmail.com",
+#     "Lizeth Garzon":  "desarrolladorbi7@gmail.com",
+# }
+
+# CC_FIJOS = ["desarrolladorbi7@gmail.com"]
 
 CIUDADES_PRINCIPALES = [
     "Bogota, D.C.", "Medellin", "Cali", "Barranquilla",
