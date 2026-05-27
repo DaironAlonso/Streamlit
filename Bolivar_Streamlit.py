@@ -848,17 +848,17 @@ def main():
 
     c1, c2 = st.columns(2)
     with c1:
-        Q20 = st.selectbox("Experiencia requerida (anos minimos) *", EXPERIENCIA_ANIOS)
+        Q20 = st.selectbox("Experiencia requerida (años minimos) *", EXPERIENCIA_ANIOS)
     with c2:
         if Q20 == "Otra":
             Q20 = st.text_input("Mencione experiencia diferente a lo anterior")
 
     c1, c2 = st.columns(2)
-    with c1:
-        Q_anios_exp = st.selectbox(
-            "Años de Experiencia *",
-            ANIOS_EXPERIENCIA
-        )
+    # with c1:
+    #     Q_anios_exp = st.selectbox(
+    #         "Años de Experiencia *",
+    #         ANIOS_EXPERIENCIA
+    #     )
     with c2:
         Q_cond_salario = st.selectbox(
             "Condición del Salario *",
