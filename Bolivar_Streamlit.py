@@ -1200,7 +1200,7 @@ def main():
                 "Q91": Q91,
                 "agr_data": agr_data if Q22 == "INTERDISCIPLINARIO" else [],
                 "Q92": Q92,   "Q93": Q93,
-                "Q_anios_exp":    Q_anios_exp,
+                # "Q_anios_exp":    Q_anios_exp,
                 "Q_cond_salario": Q_cond_salario if Q_cond_salario != "Otro Salario (indique cuál)" else Q_otro_salario,
                 "Q_otro_salario": Q_otro_salario,
             }
