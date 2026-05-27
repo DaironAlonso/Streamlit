@@ -848,22 +848,22 @@ def main():
 
     c1, c2 = st.columns(2)
     with c1:
-        Q20 = st.selectbox("Experiencia requerida (anos minimos) *", EXPERIENCIA_ANIOS)
+        Q20 = st.selectbox("Experiencia requerida (años minimos) *", EXPERIENCIA_ANIOS)
     with c2:
         if Q20 == "Otra":
             Q20 = st.text_input("Mencione experiencia diferente a lo anterior")
 
-    c1, c2 = st.columns(2)
-    with c1:
-        Q_anios_exp = st.selectbox(
-            "Años de Experiencia *",
-            ANIOS_EXPERIENCIA
-        )
-    with c2:
-        Q_cond_salario = st.selectbox(
-            "Condición del Salario *",
-            CONDICION_SALARIO
-        )
+    # c1, c2 = st.columns(2)
+    # with c1:
+    #     Q_anios_exp = st.selectbox(
+    #         "Años de Experiencia *",
+    #         ANIOS_EXPERIENCIA
+    #     )
+    # with c2:
+    Q_cond_salario = st.selectbox(
+        "Condición del Salario *",
+        CONDICION_SALARIO
+    )
 
     # CAMBIO 3: Campo "Otro Salario" obligatorio si se selecciona esa opción
     Q_otro_salario = ""
@@ -1200,7 +1200,7 @@ def main():
                 "Q91": Q91,
                 "agr_data": agr_data if Q22 == "INTERDISCIPLINARIO" else [],
                 "Q92": Q92,   "Q93": Q93,
-                "Q_anios_exp":    Q_anios_exp,
+                # "Q_anios_exp":    Q_anios_exp,
                 "Q_cond_salario": Q_cond_salario if Q_cond_salario != "Otro Salario (indique cuál)" else Q_otro_salario,
                 "Q_otro_salario": Q_otro_salario,
             }
