@@ -853,17 +853,17 @@ def main():
         if Q20 == "Otra":
             Q20 = st.text_input("Mencione experiencia diferente a lo anterior")
 
-    c1, c2 = st.columns(2)
+    # c1, c2 = st.columns(2)
     # with c1:
     #     Q_anios_exp = st.selectbox(
     #         "Años de Experiencia *",
     #         ANIOS_EXPERIENCIA
     #     )
-    with c2:
-        Q_cond_salario = st.selectbox(
-            "Condición del Salario *",
-            CONDICION_SALARIO
-        )
+    # with c2:
+    Q_cond_salario = st.selectbox(
+        "Condición del Salario *",
+        CONDICION_SALARIO
+    )
 
     # CAMBIO 3: Campo "Otro Salario" obligatorio si se selecciona esa opción
     Q_otro_salario = ""
