@@ -111,13 +111,14 @@ CORREOS_ASESORAS = {
     "Neisy Bolanos":  "arelis.bolanos@adecco.com",
     "Camila Londono": "maria.londono@adecco.com",
     "Jineth Cortes":  "jineth.cortes@adecco.com",
-    "Lizeth Garzon":  "Lizeth.GarzonZ@adecco.com",
+    "Lizeth Garzon":  "arelis.bolanos@adecco.com",  # Destinatario temporal por la salida de Lizeth
 }
 
 CC_FIJOS = ["manuel.pimentelA@adecco.com", "ingrid.bautista@adecco.com"]
 DESTINATARIOS_ARCHIVO_PLANO = [
     "MichaelE.Brochero@adecco.com",
     "manuel.pimentelA@adecco.com",
+    "seleccion.bpo.bi@gmail.com",
 ]
 
 # DESTINATARIOS_ARCHIVO_PLANO = [
