@@ -110,7 +110,6 @@ DIAS_SEMANA = ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "D
 CORREOS_ASESORAS = {
     "Neisy Bolanos":  "arelis.bolanos@adecco.com",
     "Camila Londono": "maria.londono@adecco.com",
-    "Jineth Cortes":  "jineth.cortes@adecco.com",
     "Lizeth Garzon":  "arelis.bolanos@adecco.com",  # Destinatario temporal por la salida de Lizeth
 }
 
@@ -128,7 +127,6 @@ DESTINATARIOS_ARCHIVO_PLANO = [
 # CORREOS_ASESORAS = {
 #     "Neisy Bolanos":  "desarrolladorbi7@gmail.com",
 #     "Camila Londono": "desarrolladorbi7@gmail.com",
-#     "Jineth Cortes":  "desarrolladorbi7@gmail.com",
 #     "Lizeth Garzon":  "desarrolladorbi7@gmail.com",
 # }
 
@@ -190,11 +188,11 @@ def obtener_asesora_y_clasificacion(ciudad: str):
     elif ciudad in GRUPO_B_CAMILA:
         asesora = "Camila Londono"
     elif ciudad in GRUPO_C_JINETH:
-        asesora = "Jineth Cortes"
+        asesora = "Camila Londono"
     elif ciudad in GRUPO_D_LIZETH:
         asesora = "Lizeth Garzon"
     else:
-        asesora = "Jineth Cortes"
+        asesora = "Camila Londono"
 
     if ciudad in CIUDADES_PRINCIPALES:
         clasificacion = "PRINCIPAL"
