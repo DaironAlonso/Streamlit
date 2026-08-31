@@ -184,13 +184,13 @@ def obtener_plantilla_excel() -> bytes | None:
 
 def obtener_asesora_y_clasificacion(ciudad: str):
     if ciudad in GRUPO_A_NEISY:
-        asesora = "Neisy Bolanos"
+        asesora = "Camila Londono"
     elif ciudad in GRUPO_B_CAMILA:
         asesora = "Camila Londono"
     elif ciudad in GRUPO_C_JINETH:
         asesora = "Camila Londono"
     elif ciudad in GRUPO_D_LIZETH:
-        asesora = "Lizeth Garzon"
+        asesora = "Camila Londono"
     else:
         asesora = "Camila Londono"
 
