@@ -110,7 +110,7 @@ DIAS_SEMANA = ["LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES", "SABADO", "D
 CORREOS_ASESORAS = {
     "Neisy Bolanos":  "arelis.bolanos@adecco.com",
     "Camila Londono": "maria.londono@adecco.com",
-    "Lizeth Garzon":  "arelis.bolanos@adecco.com",  # Destinatario temporal por la salida de Lizeth
+    "Laura Quicazan": "Laura.Quicazan@adecco.com",
 }
 
 CC_FIJOS = ["manuel.pimentelA@adecco.com", "ingrid.bautista@adecco.com"]
@@ -184,11 +184,11 @@ def obtener_plantilla_excel() -> bytes | None:
 
 def obtener_asesora_y_clasificacion(ciudad: str):
     if ciudad in GRUPO_A_NEISY:
-        asesora = "Camila Londono"
+        asesora = "Laura Quicazan"
     elif ciudad in GRUPO_B_CAMILA:
         asesora = "Camila Londono"
     elif ciudad in GRUPO_C_JINETH:
-        asesora = "Camila Londono"
+        asesora = "Laura Quicazan"
     elif ciudad in GRUPO_D_LIZETH:
         asesora = "Camila Londono"
     else:
